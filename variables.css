@@ -1,0 +1,39 @@
+:root {
+    --c1: #dddee0;
+    --c2: #e9ad1e;
+    --c3: #424242;
+    --c4: #ffffff;
+    --c5: #000000;
+    --c7: #1d1d1b;
+    --c8: #696969;
+    --c9: #a4a4a4;
+    --c10: #dbdbdb;
+    --c11: #666666;
+    --c12: #f6f6f6;
+    --c13: #848484;
+    --c14: #e3e2e2;
+    
+    --s1: 15px;
+    --s2: 18px;
+    --s3: 30px;
+    --s4: 22px;
+    --s5: 25px;
+    --s6: 40px;
+    --s7: 50px;
+    --s8: 13px;
+    --s9: 35px;
+
+    #header {
+        /* width: 80%;
+        margin: 0 auto; */
+        margin-bottom: 30px;
+        font-family: var(--f1);
+        color: var(--c7);
+        padding: 5px;
+        border-left: 3px solid var(--c2);
+    }
+
+    --f1: Verdana, Geneva, Tahoma, sans-serif;
+    --f2: Arial, Helvetica, sans-serif;
+
+}

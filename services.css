@@ -1,0 +1,142 @@
+#header {
+    width: 90%;
+    margin: 30px auto;
+}
+
+.cats {
+    width: 90%;
+    margin: 20px auto;
+    column-count: 3;
+    column-gap: 40px;
+    display: flex;
+}
+
+.cat {
+    width: 100%;
+    /* height: fit-content; */
+    height: 680px;
+    background-color: var(--c12);
+    border: 1px solid var(--c9);
+    border-radius: 5px;
+    margin: auto;
+    /* padding: 10px; */
+}
+
+.cat h3, .cat h4 {
+    margin: 20px 0;
+    text-align: center;
+    color: var(--c3);
+}
+
+.cat h3 {
+    font-size: var(--s4);
+}
+
+.cat h4 {
+    font-size: var(--s2);
+}
+
+.cat .available p, .cat .unavailable p {
+    width: 50%;
+    margin: 5px auto;
+    padding: 3px 0;
+    color: var(--c3);
+}
+
+.cat .unavailable p {
+    color: var(--c13);
+    text-decoration: line-through;
+}
+
+.cat .available .fa {
+    float: right;
+    color: green;
+}
+
+.cat .unavailable .fa {
+    float: right;
+    color: red;
+}
+
+.cat .repair p {
+    width: 70%;
+    margin: 10px auto;
+    padding: 3px 0;
+    color: var(--c3);
+}
+
+.cat .repair span {
+    float: right;
+}
+
+.cat .repair span .fa {
+    color: var(--c2);
+}
+
+.cat .membership_btn {
+    width: 100%;
+    margin: 30px auto;
+}
+
+.cat .membership_btn a {
+    text-decoration: none;
+    display: block;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.cat .membership_btn a button {
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid var(--c2);
+    background-color: var(--c2);
+    color: var(--c3);
+    padding: 8px 26px;
+    font-size: var(--s2);
+    display: block;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.cat .membership_btn a button:hover {
+    background-color: transparent;
+}
+
+.teaching {
+    width: 90%;
+    margin: 20px auto;
+}
+
+.teaching .cat {
+    width: 31.5%;
+    height: 580px;
+    margin: 20px auto;
+}
+
+.teaching .membership_btn .fa {
+    padding-left: 5px;
+}
+
+.teaching #or {
+    text-align: center;
+    padding-bottom: 5px;
+    border-bottom: 2px dotted var(--c2);
+}
+
+@media screen and (max-width: 414px) {
+    .cats {
+        width: 90%;
+        margin: 20px auto;
+        column-count: 1;
+        display: block;
+    }
+    .cat {
+        width: 100%;
+        height: fit-content;
+        /* height: 680px; */
+        margin: 30px auto;
+    }
+    .teaching .cat {
+        width: 100%;
+    }
+}

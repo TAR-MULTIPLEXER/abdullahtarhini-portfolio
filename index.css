@@ -1,0 +1,743 @@
+.in_intro {
+    width: 100%;
+    height: 700px;
+    background-image: url(pictures/nordwood-themes-kRNZiGKtz48-unsplash-1920x1024_edited.jpg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+/* .in_intro #profile_pic {
+    width: 150px;
+    height: 170px;
+    margin: 170px 0 0 0;
+} */
+
+.in_intro .intro_header {
+    position: absolute;
+    margin: 230px 0 0 100px;
+    font-size: var(--s4);
+    /* background-color: var(--c7); */
+    width: fit-content;
+    color: var(--c7);
+    padding: 26.5px;
+    animation-name: intro_animation;
+    animation-duration: 1.5s;
+    left: 0;
+}
+
+@keyframes intro_animation {
+    from   {opacity: 0; left:-500px;}
+    to  {opacity: 1; left:0px;}
+}
+
+.in_intro .intro_header h1 .fa {
+    color: var(--c2);
+}
+
+.in_intro .intro_header p {
+    margin-top: 10px;
+}
+
+.about {
+    width: 90%;
+    margin: 20px auto;
+    position: relative;
+    animation-name: about_animation;
+    animation-duration: 1.5s;
+    left: 0;
+}
+
+@keyframes about_animation {
+    from   {opacity: 0; left:-500px; top:0px;}
+    to  {opacity: 1; left:0px; top:0px;}
+}
+
+.about p {
+    color: var(--c3);
+    font-size: var(--s2);
+    width: 60%;
+}
+
+.about p span {
+    text-decoration: underline var(--c2);
+    font-weight: 600;
+}
+
+.about #profile_pic {
+    float: right;
+    margin-right: 10%;
+    border-radius: 10px;
+}
+
+.programming_languages {
+    width: 90%;
+    height: 600px;
+    margin: 50px auto;
+    position: relative;
+    animation-name: lang_animation;
+    animation-duration: 1.5s;
+    right: 0;
+}
+
+@keyframes lang_animation {
+    from   {opacity: 0; right:-500px; top:0px;}
+    to  {opacity: 1; right:0px; top:0px;}
+}
+
+.programming_languages img {
+    float: left;
+}
+
+.programming_languages .progress {
+    border: 2px solid var(--c3);
+    /* border-radius: 5px; */
+    width: 25%;
+    float: right;
+    margin-top: 10%;
+    margin-right: 15%;
+    padding: 20px;
+    background-color: var(--c1);
+}
+
+.programming_languages .progress h3 {
+    color: var(--c7);
+    border-left: 2px solid var(--c2);
+    padding-left: 5px;
+    margin-bottom: 20px;
+}
+
+.programming_languages .progress p {
+    margin-top: 10px;
+    /* border: 2px solid blue; */
+    color: var(--c3);
+}
+
+.programming_languages .progress .fa {
+    float: right;
+    padding-left: 5px;
+    color: var(--c2);
+}
+
+.mySlides {display: none;}
+.mySlides img {vertical-align: middle;}
+
+.all_slideshow {
+	margin: 50px auto;
+    box-sizing: border-box;
+    width: 90%;
+}
+
+.all_slideshow #header {
+    margin-top: 50px;
+}
+
+.all_slideshow .view_btn {
+    width: 100%;
+    margin: 30px auto;
+    /* border: 2px solid red; */
+}
+
+.all_slideshow .view_btn a {
+    /* border: 2px solid blue; */
+    text-decoration: none;
+    display: block;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.all_slideshow .view_btn a button {
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid var(--c2);
+    background-color: transparent;
+    color: var(--c3);
+    padding: 8px 26px;
+    font-size: var(--s2);
+    display: block;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.all_slideshow .view_btn a button:hover {
+    background-color: var(--c2);
+}
+
+.all_slideshow .view_btn a button span {
+    padding-left: 5px;
+}
+
+/* Slideshow container */
+.slideshow-container {
+  position: relative;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: var(--c2);
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+  /* color: var(--c12); */
+}
+
+/* Caption text */
+.text {
+  color: var(--c7);
+  background-color: var(--c2);
+  font-size: var(--s1);
+  padding: 8px;
+  position: absolute;
+  bottom: -37px;
+  right: 0px;
+  width: fit-content;
+  text-align: center;
+  border: 2px solid var(--c3);
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: var(--c7);
+  background-color: transparent;
+  font-size: var(--s1);
+  padding: 8px;
+  position: absolute;
+  top: -37px;
+  left: 0px;
+  border: 2px solid var(--c2);
+  text-align: center;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  /* border: 2px solid var(--c2); */
+  background-color: var(--c3);
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active {
+    background-color: var(--c2);
+}
+
+.dot:hover {
+    background-color: var(--c9);
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4} 
+  to {opacity: 1}
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+  .prev, .next,.text {font-size: 11px}
+}
+
+.my_job {
+    width: 90%;
+    height: fit-content;
+    background-color: var(--c12);
+    padding: 10px;
+    margin: 0 auto;
+    position: relative;
+    animation-name: job_animation;
+    animation-duration: 1.5s;
+    left: 0;
+}
+
+@keyframes job_animation {
+    from   {opacity: 0; left:-500px; top:0px;}
+    to  {opacity: 1; left:0px; top:0px;}
+}
+
+.my_job p {
+    color: var(--c3);
+    font-size: var(--s2);
+    width: 50%;
+    height: 400px;
+    overflow: auto;
+}
+
+.my_job p span {
+    text-decoration: underline var(--c2);
+    font-weight: 600;
+}
+
+.my_job img {
+    float: right;
+    border-radius: 10px;
+    width: 30%;
+    margin-top: 0px;
+    margin-right: 10%;
+}
+
+.break_img {
+    width: 90%;
+    margin: 50px auto;
+}
+
+.break_img img {
+    width: 100%;
+}
+
+.types_of_projects {
+    width: 90%;
+    margin: 50px auto;
+    color: var(--c3);
+}
+
+.types_of_projects .ecommerce {
+    width: 100%;
+    margin-top: 50px;
+}
+
+.types_of_projects .ecommerce img {
+    float: right;
+    width: 25%;
+    height: 250px;
+    margin-right: 10%;
+}
+
+.types_of_projects .ecommerce h3 {
+    color: var(--c3);
+    border-left: 2px solid var(--c2);
+    padding-left: 5px;
+}
+
+.types_of_projects .ecommerce p {
+    width: 50%;
+    margin: 30px 0;
+    line-height: 30px;
+}
+
+.types_of_projects .ecommerce p #question {
+    text-decoration: underline;
+}
+
+.types_of_projects .ecommerce p #answer {
+    font-weight: 600;
+}
+
+.types_of_projects .furniture {
+    width: 100%;
+    margin: 70px 0;
+}
+
+.types_of_projects .furniture img {
+    float: left;
+    width: 40%;
+    height: 250px;
+    padding-left: 2px;
+}
+
+.types_of_projects .furniture h3 {
+    color: var(--c3);
+    border-left: 2px solid var(--c2);
+    padding-left: 5px;
+    margin-left: 45%;
+    width: 50%;
+}
+
+.types_of_projects .furniture p {
+    width: 50%;
+    margin-left: 45%;
+    margin-top: 30px;
+    line-height: 30px;
+}
+
+.types_of_projects .clothing {
+    width: 100%;
+    margin-top: 100px;
+}
+
+.types_of_projects .clothing img {
+    float: right;
+    width: 30%;
+    height: 200px;
+    margin-right: 10%;
+}
+
+.types_of_projects .clothing h3 {
+    color: var(--c3);
+    border-left: 2px solid var(--c2);
+    padding-left: 5px;
+}
+
+.types_of_projects .clothing p {
+    width: 50%;
+    margin: 30px 0;
+    line-height: 30px;
+}
+
+.types_of_projects .restaurant {
+    width: 100%;
+    margin-top: 100px;
+}
+
+.types_of_projects .restaurant img {
+    float: left;
+    width: 25%;
+    height: 200px;
+    margin-left: 10%;
+}
+
+.types_of_projects .restaurant h3 {
+    color: var(--c3);
+    border-left: 2px solid var(--c2);
+    padding-left: 5px;
+    margin-left: 45%;
+    width: 50%;
+}
+
+.types_of_projects .restaurant p {
+    width: 50%;
+    margin-left: 45%;
+    margin-top: 50px;
+    line-height: 30px;
+}
+
+.education {
+    width: 90%;
+    margin: 30px auto;
+}
+
+.education table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+    color: var(--c3);
+}
+
+th, td {
+    border: 1px solid var(--c10);
+    padding: 20px;
+}
+
+.footer {
+    position: relative;
+    top: 0;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, -50%);
+    /* max-width: 1280px; */
+    width: 100%;
+    background-color: var(--c1);
+    /* border-radius: 6px; */
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--f1);
+    color: var(--c11);
+    margin: 250px 0 0 0;
+}
+.footer .fa {
+    color: var(--c2);
+    padding: 0 10px 0 0;
+}
+.footer .footer-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 3.5rem;
+    padding: 60px;
+}
+.footer-row .footer-col h4 {
+    color: var(--c2);
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+.footer-col .links {
+    margin-top: 20px;
+}
+.footer-col .links li {
+    list-style: none;
+    margin-bottom: 10px;
+    margin-left: 0px;
+}
+.footer-col .links li a {
+    text-decoration: none;
+    color: var(--c23);
+}
+.footer-col .links li a:hover {
+    color: var(--c3);
+}
+.footer-col img {
+    width: 150px;
+    height: 200px;
+    background-color: var(--c7);
+    padding: 5px;
+    object-fit: contain;
+}
+.footer-col p {
+    margin: 20px 0;
+    color: var(--c11);
+    max-width: 300px;
+}
+.footer-col form {
+    display: flex;
+    gap: 5px;
+}
+.footer-col input {
+    height: 40px;
+    border-radius: 6px;
+    background: none;
+    width: 100%;
+    outline: none;
+    border: 1px solid var(--c11);
+    caret-color: var(--c2);
+    color: var(--c3);
+    padding-left: 10px;
+}
+.footer-col input::placeholder {
+    color: var(--c11);
+}
+.footer-col form button {
+    background: transparent;
+    outline: none;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s ease;
+    color: var(--c11);
+    border: 1px solid var(--c2);
+}
+.footer-col form button:hover {
+    background-color: var(--c2);
+    /* color: var(--c3); */
+    /* border: 1px solid var(--c15); */
+}
+.footer-col .icons {
+    display: flex;
+    margin-top: 30px;
+    gap: 15px;
+}
+.footer-col .icons i {
+    color: var(--c11);
+    font-size: var(--s4);
+}
+.footer-col .icons i:hover  {
+    color: var(--c3);
+}
+
+#thanks {
+    text-align: center;
+    font-size: var(--s5);
+    border-top: 2px solid var(--c9);
+    color: var(--c2);
+    padding-top: 10px;
+    width: 100%;
+    margin: -100px auto 10px;
+}
+
+#copyright {
+    text-align: center;
+    font-size: var(--s1);
+    font-family: var(--f2);
+    padding-top: 20px;
+    color: var(--c11);
+    width: 80%;
+    margin: 0 auto 20px;
+}
+
+@media screen and (max-width: 414px) {
+    .in_intro {
+        width: 100%;
+        height: 650px;
+        background-image: url(pictures/vertical_bg_edited_.jpg);
+        background-size: 100%;
+        background-repeat: no-repeat;
+    }
+    /* .in_intro #profile_pic {
+        width: 100px;
+        height: 120px;
+        display: block;
+        margin: 0 auto;
+    } */
+    .in_intro .intro_header {
+        position: relative;
+        width: 70%;
+        display: block;
+        margin: 0 auto;
+        font-size: var(--s8);
+        padding: 26.5px;
+        /* border: 2px solid var(--c7); */
+    }
+    .in_intro .intro_header p {
+        font-size: var(--s2);
+    }
+    .about {
+        width: 80%;
+        margin: 0 auto;
+    }
+    .about p {
+        font-size: var(--s2);
+        width: 100%;
+        overflow: auto;
+        height: 240px;
+    }
+    .about #profile_pic {
+        float: none;
+        margin-right: 0px;
+        margin-top: 0px;
+        display: block;
+        margin: 20px auto;
+    }
+    .programming_languages {
+        width: 80%;
+        height: 750px;
+        margin: 50px auto;
+        position: relative;
+    }
+    .programming_languages img {
+        float: left;
+        width: 100%;
+    }
+    .programming_languages .progress {
+        width: 85%;
+        float: left;
+        margin-top: 0;
+        margin-right: 0;
+        display: block;
+        margin: 30px auto;
+        padding: 20px;
+    }
+    .my_job {
+        width: 80%;
+        margin: 0 auto;
+        position: relative;
+    }
+    .my_job p {
+        color: var(--c3);
+        font-size: var(--s2);
+        width: 100%;
+        height: 300px;
+        overflow: auto;
+    }
+    .my_job img {
+        float: none;
+        display: block;
+        margin: 20px auto;
+        border-radius: 10px;
+        width: 90%;
+    }
+    .types_of_projects {
+        width: 80%;
+        margin: 50px auto;
+    }
+    .types_of_projects .ecommerce img {
+        float: none;
+        width: 100%;
+    }
+    .types_of_projects .ecommerce p {
+        width: 100%;
+        margin: 30px 0;
+        line-height: 30px;
+    }
+    .types_of_projects .furniture img {
+        float: left;
+        width: 100%;
+        height: 250px;
+        margin-bottom: 30px;
+    }
+    .types_of_projects .furniture h3 {
+        margin-left: 0;
+        width: 100%;
+    }
+    .types_of_projects .furniture p {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 0;
+        display: block;
+        margin: 30px auto;
+        line-height: 30px;
+    }
+    .types_of_projects .clothing {
+        width: 100%;
+        margin-top: 50px;
+    }
+    .types_of_projects .clothing img {
+        float: none;
+        width: 100%;
+        height: 200px;
+        margin-right: 0;
+    }
+    .types_of_projects .clothing p {
+        width: 100%;
+        margin: 30px 0;
+        line-height: 30px;
+    }
+    .types_of_projects .restaurant img {
+        float: left;
+        width: 100%;
+        height: 250px;
+        margin-bottom: 30px;
+        margin-left: 0;
+    }
+    .types_of_projects .restaurant h3 {
+        margin-left: 0;
+        width: 100%;
+    }
+    .types_of_projects .restaurant p {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 0;
+        display: block;
+        margin: 30px auto;
+        line-height: 30px;
+    }
+    .education table img {
+        display: block;
+        margin: 0 auto;
+    }
+    th {
+        display: block;
+    }
+    td {
+        display: flex;
+    }
+    .footer {
+        margin: 600px 0 0 0;
+    }
+    .footer-col img {
+        background-color: var(--c1);
+    }
+    #thanks {
+        font-size: var(--s4);
+        margin: -450px auto 10px;
+    }
+    #copyright {
+        font-size: var(--s8);
+    }
+}

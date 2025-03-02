@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Abdullah Tarhini's Portfolio</title>
+    <link rel="stylesheet" href="portfolio.css">
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="nav_and_footer.css">
+    <script src="responsive_nav.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="pictures/abd_logo_icon_edited_2.png">
+</head>
+<body>
+    <div class="intro" id="home">
+        <nav>
+            <a href="index.html"><img id="logo" src="pictures/abd_logo.jpeg"></a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#education">Education</a></li>
+                <li><a href="index.html#coding_langs"><i class="fa fa-code" aria-hidden="true"></i> Languages</a></li>
+                <li><a href="index.html#my_job">My Job</a></li>
+                <li><a href="#footer">Contact</a></li><hr id="nav_hr">
+                <li><a id="active_after_hr" href="portfolio.html">Portfolio</a></li><hr id="nav_hr">
+                <li><a id="after_hr" href="services.html">Services</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="mobile-container">
+        <div class="topnav">
+        <a href="index.html"><img id="logo_resp" src="pictures/abd_logo.jpeg"></a>
+        <div id="myLinks">
+            <a href="index.html">Home</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#education">Education</a>
+            <a href="index.html#coding_langs"><i class="fa fa-code" aria-hidden="true"></i> Languages</a>
+            <a href="index.html#my_job">My Job</a>
+            <a href="#footer">Contact</a><hr id="nav_hr">
+            <a id="active_after_hr" href="portfolio.html">Portfolio</a><hr id="nav_hr">
+            <a id="after_hr" href="services.html">Services</a>
+        </div>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="fa fa-bars"></i>
+        </a>
+        </div>
+    </div>
+    <div class="cat">
+        <button><a href="portfolio.html" >All</a></button>
+        <button><a href="websites.html" >Websites</a></button>
+        <button id="selected"><a href="systems.html">Systems</a></button>
+    </div>
+        <h1 id="header">Portfolio | Systems</h1>
+        <div class="all_portfolio">
+             <div class="project">
+                <img src="pictures/homepage2.JPG">
+                <div class="content">
+                <h3><i class="fa fa-chevron-right" aria-hidden="true"></i> Whish Money System</h3>
+                 <button><a href="whishmoney.html" target="_blank">View Details</a></button>
+                <div class="portfolio_link" hidden>
+                <a href="#"><h4><i class="fa fa-link" aria-hidden="true"></i> Whish Money System</h4></a>
+                </div>
+                 <div class="languages">
+                    <span  id="html"  >HTML</span><span id="css" >CSS</span><span id="js" >JS</span><span id="php" >PHP</span><span id="disabled" >ANGULAR</span>
+                </div>
+                <p>This project is <b>whish money system</b> that displays items in whish money store and easy find these items using either <u>barcode scanner</u> or search by product name this system allows the the manager to add product,edit and delete items </p>
+                </div>
+            </div>
+             <div class="project">
+                <img src="pictures/candystore.JPG">
+                <div class="content">
+                <h3><i class="fa fa-chevron-right" aria-hidden="true"></i> Merchant System </h3>
+                <button><a href="merchantsystem.html" target="_blank">View Details</a></button>
+                <div class="portfolio_link" hidden>
+                <a href="https://karanbashcandy.rf.gd"><h4><i class="fa fa-link" aria-hidden="true"></i> https://karanbashcandy.rf.gd</h4></a>
+                </div>
+                 <div class="languages">
+                    <span  id="html"  >HTML</span><span id="css" >CSS</span><span id="js" >JS</span>
+                    <span id="php" >PHP</span><span id="disabled" >ANGULAR</span>
+                </div>
+                <p> This project is <b>system website</b> is for merchant and custom for stores owners this website allows owners to browse products based on categories, with the ability to filter and view items within specific categories then request these orders. the merchant now will see the orders and see if there is shortfalls and inser the quantities and in this system there is another partnerwhich is the factory so it will see the shortfall auto and send the products later and when The number is complete then will remove the shortfalls... </p>
+                </div>
+            </div>
+            <div class="project">
+                <img src="pictures/inventory_system_home.JPG">
+                <div class="content">
+                <h3><i class="fa fa-chevron-right" aria-hidden="true"></i> Inventory System </h3>
+                <button><a href="inventorysystem.html" target="_blank">View Details</a></button>
+                <div class="portfolio_link" hidden>
+                <a href="https://karanbashcandy.rf.gd"><h4><i class="fa fa-link" aria-hidden="true"></i> https://karanbashcandy.rf.gd</h4></a>
+                </div>
+                 <div class="languages">
+                    <span  id="html"  >HTML</span><span id="css" >CSS</span><span id="js" >JS</span>
+                    <span id="php" >PHP</span><span id="disabled" >ANGULAR</span>
+                </div>
+                <p> This project is <b>Inventory system</b> that displays the product and contains of :
+                    filters (prices,types) , barcode scanner , cart (edit price or quantity,remove) giving the results for the percentages (gain or loss )
+                    ,today sales , inventory (daily,monthly,yearly) graphes used (linegraph,bargraph,circlegraph) , 
+                    archives , products manager (add,edit,delete) <br>
+                <u>More details:</u> - in the adding product the user add the product price and the trader price to give the percentage gain or loss for this item 
+                or he can add the trader price and the percentage then the system gives the price should be automatic way. <br>
+                - in tody's sale the system will place all the orders that was in that day and give the total gain or loss percentage with the total price 
+                for each client and the total price for all that day then when finish submit the day then will appear in the daily inventory. 
+                </p>
+                </div>
+            </div>
+            <div class="project">
+                <img src="pictures/cashier system caption.JPG">
+                <div class="content">
+                <h3><i class="fa fa-chevron-right" aria-hidden="true"></i> Cashier System </h3>
+                 <div class="languages">
+                    <span  id="html"  >HTML</span><span id="css" >CSS</span><span id="js" >JS</span>
+                    <span id="php" >PHP</span><span id="disabled" >ANGULAR</span>
+                </div>
+                <p> This project is <b>Cashier system</b> that displays the items with categories now the user can scan on the barcode to select the item
+                     these selected items will be displayed in the cart with the price and the quantity ordered and the total price
+                    and under them the number container here we can edit the quantity and the price by using the %'s and we can remove a selected item 
+                    at last user submit the order by clicking on the enter button to finish this client.
+            </p>
+                </div>
+            </div>
+        </div>
+        <footer class="footer" id="footer">
+            <div class="footer-row">
+                <div class="footer-col">
+                      <a href="index.html#home">
+                          <img src="pictures/abd_logo.jpeg">
+                      </a>
+                </div>
+                <div class="footer-col">
+                  <h4><i class="fa fa-address-book" aria-hidden="true"></i> Contact Us</h4>
+                  <ul class="links">
+                      <li><i class="fa fa-phone" aria-hidden="true"></i>
+                          <a href="tel:+96170389556">+961 70 389 556</a>
+                      </li>
+                      <li><i class="fa fa-envelope" aria-hidden="true"></i>
+                          <a href="https://mail.google.com/mail/u/0/?view=cm&fs=1&to=abdullahtarhini55@gmail.com" target="_blank">abdullahtarhini55@gmail.com</a>
+                      </li>
+                      <h4 style="padding-top: 30px;"><i class="fa fa-globe" aria-hidden="true"></i> Social</h4>
+                      <div class="icons">
+                          <a href="https://www.facebook.com/abdullah.tarhini/">
+                              <i class="fa fa-facebook"></i>
+                          </a>
+                          <a href="https://www.instagram.com/web_developer.tarhini/">
+                              <i class="fa fa-instagram"></i>
+                          </a>
+                          <a href="https://www.google.com/search?q=abdullah+tarhini+portfolio&source=lmns&bih=641&biw=1366&hl=en&sa=X&   ved=2ahUKEwjE4ZLQ45SHAxVnsScCHYilAUcQ0pQJKAB6BAgBEAI">
+                              <i class="fa fa-google"></i>
+                          </a>
+                          <a href="https://www.linkedin.com/in/abdullah-tarhini-88aa99290?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app">
+                            <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                          </a>
+                          <a href="https://www.youtube.com/@user-dw5vb2bo4p">
+                             <i class="fa fa-youtube-play" aria-hidden="true"></i>
+                          </a>
+                      </div>
+                  </ul>
+                </div>
+                <div class="footer-col">
+                  <h4><i class="fa fa-address-card" aria-hidden="true"></i> Address</h4>
+                  <ul class="links">
+                      <li><i class="fa fa-map-marker" aria-hidden="true"></i> Lebanon, Nabatieh. </li>
+                      <li><i class="fa fa-map" aria-hidden="true"></i> Jibcheet</li>
+                  </ul>
+                </div>
+                <div class="footer-col">
+                  <h4><i class="fa fa-list-ul" aria-hidden="true"></i> About Us</h4>
+                  <p>
+                    If you have any questions, comments, or inquiries, 
+                    please don't hesitate to get in touch with me. 
+                    You can reach me out at any time. 
+                  </p>
+                  <form action="https://mail.google.com/mail/u/0/?view=cm&fs=1&to=abdullahtarhini55@gmail.com" target="_blank">
+                    <input type="text" placeholder="Your Email.." title="Write Your Email To Contact Me (Optional)" required>
+                    <button type="submit">Submit</button>
+                  </form>
+                </div>
+              </div>
+        </footer>
+        <h3 id="thanks">Thanks For Being Here! <br>Appreciate Your Visit.. </h3>
+        <h3 id="copyright">Designed & Developed By "Abdullah Tarhini" <br><i class="fa fa-copyright" aria-hidden="true"></i> 2024 | All Rights Reserved</h3>
+</body>
+</html>

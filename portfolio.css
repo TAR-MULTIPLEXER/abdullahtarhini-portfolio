@@ -1,0 +1,214 @@
+#header {
+    margin: 50px auto;
+    width: 90%;
+}
+
+.languages {
+    margin: 30px 0;
+    padding: 5px;
+    width: 250px;
+    display: flex;
+    justify-content: space-between;
+    /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
+}
+
+.languages span {
+    padding: 4px;
+    border-radius: 15px;
+    font-size: 8px;
+
+}
+
+#html {
+    color: orangered;
+    text-shadow: 0 0 1px orangered, 0 0 1px orangered, 0 0 1px orangered, 0 0 1px orangered;
+    border: 1px solid orangered;
+    box-shadow: 0 0 5px orangered, 0 0 5px orangered, 0 0 10px orangered, 0 0 40px orangered;
+}
+
+#css {
+    color: #007bff;
+    /* Blue color */
+    text-shadow: 0 0 1px #007bff, 0 0 1px #007bff, 0 0 1px #007bff, 0 0 1px #007bff;
+    border: 1px solid #007bff;
+    box-shadow: 0 0 5px #007bff, 0 0 5px #007bff, 0 0 10px #007bff, 0 0 40px #007bff;
+}
+
+#js {
+    color: #b7a22b;
+    /* Updated Yellow color */
+    text-shadow: 0 0 1px #b7a22b, 0 0 1px #b7a22b, 0 0 1px #b7a22b, 0 0 1px #b7a22b;
+    border: 1px solid #b7a22b;
+    /* Updated border color */
+    box-shadow: 0 0 5px #b7a22b, 0 0 5px #b7a22b, 0 0 10px #b7a22b, 0 0 40px #b7a22b;
+}
+
+#php {
+    color: #800080;
+    text-shadow: 0 0 1px #800080, 0 0 1px #800080, 0 0 1px #800080, 0 0 1px #800080;
+    border: 1px solid #800080;
+    box-shadow: 0 0 5px #800080, 0 0 5px #800080, 0 0 10px #800080, 0 0 40px #800080;
+}
+
+#angular {
+    color: #ff0000;
+    text-shadow: 0 0 1px #ff0000, 0 0 1px #ff0000, 0 0 1px #ff0000, 0 0 1px #ff0000;
+    border: 1px solid #ff0000;
+    box-shadow: 0 0 5px #ff0000, 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 40px #ff0000;
+}
+
+#jsoff {
+    color: #b1a980;
+    border: 2px solid #b1a980;
+    font-weight: 900;
+}
+
+#phpoff {
+    color: #905890;
+    border: 2px solid #905890;
+    font-weight: 900;
+}
+
+#angularoff {
+    color: rgb(143, 72, 72);
+    border: 2px solid rgb(143, 72, 72);
+    font-weight: 900;
+    background-color: lightgray;
+}
+
+#disabled {
+    border: 2px solid gray;
+    background-color: lightgrey;
+
+}
+.cat{
+    text-align: center;
+    margin: 30px 0 -30px 0;
+}
+.cat button{
+    background-color: var(--c7);
+    padding: 8px 15px;
+    margin: 0 10px;
+    border-radius: 5px;
+    border: 2px solid var(--c2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.608);
+    transition: background-color 0.3s;
+}
+.cat button:hover {
+    background-color: var(--c13);
+}
+.cat a{
+    text-decoration: none;
+    color: var(--c2);
+    font-size: 14px;
+}
+.cat #selected{
+    background-color: var(--c2);
+    border: 1px solid var(--c7);
+}
+.cat #selected a{
+    color: var(--c5);
+}
+.all_portfolio {
+    width: 90%;
+    margin: 30px auto;
+    background-color: var(--c1);
+}
+
+.all_portfolio .project {
+    width: 100%;
+    height: 400px;
+    padding: 20px 20px 20px 30px;
+    /* margin: 100px 0; */
+}
+
+.all_portfolio img {
+    float: right;
+    width: 45%;
+    margin-right: 5%;
+}
+.all_portfolio h1{
+    text-align: center;
+    color: var(--c8);
+    border-bottom: 1px solid var(--c8);
+    padding: 10px;
+}
+.all_portfolio .project h3 {
+    color: var(--c3);
+    margin: 20px 0;
+}
+
+.all_portfolio .project .portfolio_link {
+    width: 100%;
+}
+
+.all_portfolio .project .portfolio_link a {
+    color: var(--c11);
+    width: fit-content;
+    display: block;
+}
+
+.all_portfolio .project .portfolio_link a h4 {
+    color: var(--c2);
+}
+
+.all_portfolio .project .portfolio_link a h4 .fa {
+    padding-right: 5px;
+    text-decoration: none;
+    color: var(--c3);
+}
+
+.all_portfolio .project .portfolio_link a h4:hover {
+    color: var(--c11);
+}
+
+.all_portfolio .project p {
+    width: 45%;
+    color: var(--c11);
+    margin: 20px 0;
+    height: 220px;
+    overflow: auto;
+}
+
+.project button a {
+    text-decoration: none;
+    color: black;
+}
+
+.project button {
+    padding: 8px 16px;
+    background-color: var(--c2);
+    border: none;
+    margin-left: 50px;
+}
+
+@media screen and (max-width: 414px) {
+    .all_portfolio .project {
+        width: 100%;
+        height: auto;
+        padding: 20px 20px 20px 0px;
+    }
+
+    .all_portfolio img {
+        float: none;
+        width: 90%;
+        height: auto;
+        margin-right: 0;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .all_portfolio .project .content {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .all_portfolio .project .portfolio_link {
+        width: 100%;
+    }
+
+    .all_portfolio .project p {
+        width: 100%;
+        margin: 20px 0;
+    }
+}
