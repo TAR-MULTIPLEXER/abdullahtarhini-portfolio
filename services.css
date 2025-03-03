@@ -1,6 +1,7 @@
 #header {
     width: 90%;
     margin: 30px auto;
+    font-size: large;
 }
 
 .cats {
@@ -47,7 +48,10 @@
     color: var(--c13);
     text-decoration: line-through;
 }
-
+.fa-circle-check{
+    float: right;
+    color: var(--c2);
+}
 .cat .available .fa {
     float: right;
     color: green;
@@ -101,16 +105,19 @@
 .cat .membership_btn a button:hover {
     background-color: transparent;
 }
-
+.other-service{
+    display: flex;
+    justify-content: space-between;
+}
 .teaching {
     width: 90%;
-    margin: 20px auto;
+
 }
 
 .teaching .cat {
-    width: 31.5%;
-    height: 580px;
-    margin: 20px auto;
+    width: 60%;
+    height: 600px;
+
 }
 
 .teaching .membership_btn .fa {
@@ -138,5 +145,12 @@
     }
     .teaching .cat {
         width: 100%;
+    }
+    .other-service{
+    display: block;
+    margin:auto;
+}
+    #header{
+        font-size: smaller;
     }
 }
