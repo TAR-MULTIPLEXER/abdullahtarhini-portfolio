@@ -5,18 +5,10 @@
     background-size: 100%;
     background-repeat: no-repeat;
 }
-
-/* .in_intro #profile_pic {
-    width: 150px;
-    height: 170px;
-    margin: 170px 0 0 0;
-} */
-
 .in_intro .intro_header {
     position: absolute;
     margin: 230px 0 0 100px;
     font-size: var(--s4);
-    /* background-color: var(--c7); */
     width: fit-content;
     color: var(--c7);
     padding: 26.5px;
@@ -55,7 +47,7 @@
 .about p {
     color: var(--c3);
     font-size: var(--s2);
-    width: 60%;
+    width: 80%;
 }
 
 .about p span {
@@ -65,7 +57,9 @@
 
 .about #profile_pic {
     float: right;
-    margin-right: 10%;
+    margin-left: 5%;
+    height: 300px;
+    /* margin-right: 5%; */
     border-radius: 10px;
 }
 
@@ -282,25 +276,133 @@
 
 .my_job p {
     color: var(--c3);
-    font-size: var(--s2);
-    width: 50%;
-    height: 400px;
+    /* font-size: var(--s2); */
+    width: 100%;
+    height: 420px;
     overflow: auto;
+    line-height: 30px;
+   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .my_job p span {
     text-decoration: underline var(--c2);
     font-weight: 600;
 }
-
 .my_job img {
-    float: right;
-    border-radius: 10px;
-    width: 30%;
-    margin-top: 0px;
-    margin-right: 10%;
+    /* float: right; */
+    display: block;
+   width: 60%;
+   height: 600px;
+    margin: auto;
+    /* margin-top: 0px;
+    margin-right: 10%; */
 }
+.fa-arrow-right{
+    display: flex;
+    margin: auto auto;
+    color: #333333;
+}
+/* optimization code  */
+.optimization-text{
+    text-align: center;
+    width: fit-content;
+    display: block;
+    margin: 10px 0 0 30px;
+    border-bottom: 3px solid #ffbd44;
 
+}
+#btw-codes{
+    display: none;
+    height: 10px;
+    margin: 20px 0;
+    border: none;
+    background-color: #c7c7c7;
+}
+.card-container{
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin: 50px auto;
+}
+.card {
+    width: 400px;
+    height: 260px;
+  cursor :context-menu;
+    background-color: #24233b;
+    border-radius: 8px;
+    z-index: 1;
+    box-shadow: 0px 10px 10px rgb(73, 70, 92);
+    transition: 0.5s;
+  }
+  .card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0px 10px 10px black;
+  }
+  
+  .top {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+  }
+  
+  .circle {
+    padding: 0 4px;
+  }
+  
+  .circle2 {
+    display: inline-block;
+    align-items: center;
+    width: 10px;
+    height: 10px;
+    padding: 1px;
+    border-radius: 5px;
+
+  }
+  
+  .red {
+    background-color: #ff605c;
+  }
+  
+  .yellow {
+    background-color: #ffbd44;
+  }
+  
+  .green {
+    background-color: #00ca4e;
+  }
+  
+  .header {
+    margin: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    
+  }
+  
+  #title2 {
+    color: white;
+    padding-left: 50px;
+    font-size: 15px;
+  }
+  
+  .code-container {
+    text-align: center;
+  }
+  #code {
+    width: 350px;
+    height: 195px;
+    resize: none;
+    background-color: rgb(73, 70, 92);
+    border-radius: 5px;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: context-menu;
+   
+  }
+  #code:focus {
+    outline: none !important;
+  }
+  /* ////////////////////// */
 .break_img {
     width: 90%;
     margin: 50px auto;
@@ -570,8 +672,14 @@ th, td {
     width: 80%;
     margin: 0 auto 20px;
 }
-
+/* responsive */
 @media screen and (max-width: 414px) {
+    #btw-codes{
+        display: block;
+    }
+    #header{
+        font-size: 20px;
+    }
     .in_intro {
         width: 100%;
         height: 650px;
@@ -579,12 +687,6 @@ th, td {
         background-size: 100%;
         background-repeat: no-repeat;
     }
-    /* .in_intro #profile_pic {
-        width: 100px;
-        height: 120px;
-        display: block;
-        margin: 0 auto;
-    } */
     .in_intro .intro_header {
         position: relative;
         width: 70%;
@@ -598,31 +700,35 @@ th, td {
         font-size: var(--s2);
     }
     .about {
-        width: 80%;
+        width: 90%;
         margin: 0 auto;
     }
     .about p {
-        font-size: var(--s2);
-        width: 100%;
+       font-size: 10px;
+        width: 68%;
         overflow: auto;
-        height: 240px;
+        height: 400px;
+        margin-top: -20px;
     }
     .about #profile_pic {
-        float: none;
-        margin-right: 0px;
-        margin-top: 0px;
-        display: block;
-        margin: 20px auto;
+        float: right;
+        height: 150px;
+        padding: 0;
+        /* margin-right: 0px;
+        margin-top: 0px; */
+        display: flex;
+        /* margin: 20px auto; */
     }
     .programming_languages {
         width: 80%;
-        height: 750px;
+        height: 500px;
         margin: 50px auto;
         position: relative;
     }
     .programming_languages img {
-        float: left;
-        width: 100%;
+        display: flex;
+       margin-left: 25%;
+        width: 50%;
     }
     .programming_languages .progress {
         width: 85%;
@@ -640,18 +746,37 @@ th, td {
     }
     .my_job p {
         color: var(--c3);
-        font-size: var(--s2);
+       font-size: 10px;
         width: 100%;
-        height: 300px;
-        overflow: auto;
+        height: 350px;
+        /* overflow: auto; */
+        line-height: 1;
     }
     .my_job img {
         float: none;
         display: block;
         margin: 20px auto;
         border-radius: 10px;
-        width: 90%;
+        width: 60%;
+        height: 200px;
     }
+    .card-container{
+        display: block;
+        margin: auto;
+    }
+    .card{
+        width: 240px;
+        margin: auto;
+
+    }
+    #code{
+        width: 220px;
+    }
+    .fa-arrow-right{
+        transform: rotate(90deg);
+      margin-left: 45%;
+    }
+  
     .types_of_projects {
         width: 80%;
         margin: 50px auto;
@@ -727,6 +852,7 @@ th, td {
     td {
         display: flex;
     }
+   
     .footer {
         margin: 600px 0 0 0;
     }
