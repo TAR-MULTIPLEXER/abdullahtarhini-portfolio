@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Install system dependencies
+# Install system dependencies AND required PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libsqlite3-dev \
-    && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd
+    libicu-dev \
+    libzip-dev \
+    && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd intl zip
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -39,5 +41,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Expose port 80
 EXPOSE 80
 
-# ✅ Start script: Run migrations THEN start Apache
+# ✅ Run migrations at startup, then start Apache
 CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
