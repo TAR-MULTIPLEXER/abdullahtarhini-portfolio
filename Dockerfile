@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Install system dependencies AND required PHP extensions (including PostgreSQL)
+# Install system dependencies AND required PHP extensions (including PostgreSQL!)
 RUN apt-get update && apt-get install -y \
     git \
     curl \
