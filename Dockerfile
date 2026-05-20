@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Install system dependencies AND required PHP extensions
+# Install system dependencies AND required PHP extensions (including PostgreSQL)
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
     libicu-dev \
     libzip-dev \
-    && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd intl zip
+    libpq-dev \
+    && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd intl zip pdo_pgsql
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -29,7 +30,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Ensure database directory and file exist
+# Ensure database directory and file exist (for SQLite fallback)
 RUN mkdir -p database && touch database/database.sqlite
 
 # Set permissions
