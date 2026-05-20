@@ -1,4 +1,3 @@
-# Use the official PHP image with Apache
 FROM php:8.2-apache
 
 # Install system dependencies
@@ -19,7 +18,7 @@ RUN a2enmod rewrite
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first (for caching)
+# Copy composer files first
 COPY composer.json composer.lock ./
 
 # Install Composer
@@ -31,8 +30,14 @@ RUN composer install --no-dev --optimize-autoloader
 # Copy the rest of the application
 COPY . .
 
+# Ensure database directory and file exist
+RUN mkdir -p database && touch database/database.sqlite
+
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+
+# ✅ RUN MIGRATIONS HERE (This is the key step!)
+RUN php artisan migrate --force
 
 # Expose port 80
 EXPOSE 80
