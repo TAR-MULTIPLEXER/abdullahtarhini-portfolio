@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Install system dependencies AND required PHP extensions (including PostgreSQL!)
+# Install system dependencies AND required PHP extensions
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -21,7 +21,7 @@ RUN a2enmod rewrite
 # Set working directory
 WORKDIR /var/www/html
 
-# ✅ COPY EVERYTHING FIRST (So artisan exists for composer)
+# Copy everything first (so artisan exists for composer)
 COPY . .
 
 # Install Composer
@@ -30,7 +30,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Ensure database directory and file exist (for SQLite fallback)
+# Ensure database directory exists (fallback)
 RUN mkdir -p database && touch database/database.sqlite
 
 # Set permissions
@@ -39,5 +39,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Expose port 80
 EXPOSE 80
 
-# ✅ Run migrations at startup, then start Apache
+# Run migrations at startup, then start Apache
 CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
