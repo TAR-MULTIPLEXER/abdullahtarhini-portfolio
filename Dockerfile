@@ -20,17 +20,14 @@ RUN a2enmod rewrite
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first
-COPY composer.json composer.lock ./
+# ✅ COPY EVERYTHING FIRST (So artisan exists for composer)
+COPY . .
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
-
-# Copy the rest of the application
-COPY . .
 
 # Ensure database directory and file exist
 RUN mkdir -p database && touch database/database.sqlite
