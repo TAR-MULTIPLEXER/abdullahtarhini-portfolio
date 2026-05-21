@@ -11,20 +11,24 @@ class PortfolioSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create a default admin user
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'abdullahtarhini55@gmail.com',
-            'password' => Hash::make('communication41730076'), 
-        ]);
+        // 1. Create Admin User (This is all we need for login)
+        User::updateOrCreate(
+            ['email' => 'abdullahtarhini55@gmail.com'],
+            [
+                'name' => 'Abdullah Tarhini',
+                'password' => Hash::make('communication41730076'), 
+            ]
+        );
 
-        // Add sample projects (customize as needed)
-        Project::create([
-            'title' => 'Sample Project',
-            'description' => 'This is a sample project description.',
-            'image' => 'default-project.jpg',
-            'is_featured' => true,
-            'sort_order' => 1,
-        ]);
+        // 2. Create a Simple Project (No image for now to prevent crashes)
+        Project::updateOrCreate(
+            ['title' => 'Sample Project'],
+            [
+                'description' => 'This is a sample project.',
+                'image' => null, // Set to null temporarily
+                'is_featured' => true,
+                'sort_order' => 1,
+            ]
+        );
     }
 }
