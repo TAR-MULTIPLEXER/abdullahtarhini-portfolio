@@ -1,0 +1,1 @@
+@tailwind base;@tailwind components;@tailwind utilities;body{font-family:Inter,sans-serif}h1,h2,h3,h4,h5,h6{font-family:Montserrat,sans-serif}::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#f1f1f1}::-webkit-scrollbar-thumb{background:#06b6d4;border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#0891b2}
