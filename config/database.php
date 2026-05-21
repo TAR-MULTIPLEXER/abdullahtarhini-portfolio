@@ -17,7 +17,7 @@ return [
     */
 
     // ✅ FORCE SQLITE HERE
-    'default' => env('DB_CONNECTION', 'sqlite'),
+'default' => 'sqlite', // <--- HARDCODED TO SQLITE
 
     /*
     |--------------------------------------------------------------------------
