@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Install system dependencies
+# Install system dependencies (SQLite is built-in)
 RUN apt-get update && apt-get install -y \
     git \
     curl \
