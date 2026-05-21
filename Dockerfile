@@ -43,4 +43,4 @@ RUN echo "DB_CONNECTION=sqlite" >> .env \
 EXPOSE 80
 
 # Run migrations then start Apache
-CMD ["sh", "-c", "php artisan migrate --force --seed && apache2-foreground"]
+CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
