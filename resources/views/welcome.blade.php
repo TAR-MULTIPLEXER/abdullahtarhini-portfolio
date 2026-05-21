@@ -444,7 +444,7 @@ object-fit: cover; }
                 </div>
             </div>
             <div class="about-image">
-   <img src="{{ Storage::url('images/abd_logo.jpeg') }}" alt="Your Name">
+  <img src="{{ asset('images/abd_logo.jpeg') }}" alt="Logo">
 </div>
     </div>
 </section>
