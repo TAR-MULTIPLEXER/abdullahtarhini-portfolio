@@ -32,18 +32,19 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# ✅ CRITICAL: Create SQLite database file and set permissions
-# ... (previous lines) ...
-
-# Ensure database directory and file exist with proper permissions
-RUN mkdir -p /var/www/html/database \
+# ✅ CRITICAL: Force SQLite Configuration & Create DB File
+RUN echo "DB_CONNECTION=sqlite" >> .env \
+    && echo "DB_DATABASE=/var/www/html/database/database.sqlite" >> .env \
+    && mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
     && chown -R www-data:www-data /var/www/html/database \
     && chmod -R 775 /var/www/html/database \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
 
 # Expose port 80
 EXPOSE 80
 
 # Run migrations at startup, then start Apache
+# Note: We removed --seed because you don't have seeders set up yet. 
+# Once it works, you can add --seed back if you create a DatabaseSeeder.
 CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
