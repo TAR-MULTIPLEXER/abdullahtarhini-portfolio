@@ -20,26 +20,26 @@ RUN a2enmod rewrite \
     && sed -i 's|<Directory /var/www/html>|<Directory /var/www/html/public>|g' /etc/apache2/sites-available/000-default.conf \
     && sed -i '/<Directory \/var\/www\/html\/public>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/sites-available/000-default.conf
 
-# Set working directory
 WORKDIR /var/www/html
-
-# Copy everything first
 COPY . .
-
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install PHP dependencies
+# Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# ✅ CRITICAL: Create SQLite database with correct path and permissions
-RUN mkdir -p /var/www/html/database \
+# ✅ CRITICAL: Create all necessary directories with proper permissions
+RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
+    && mkdir -p /var/www/html/bootstrap/cache \
+    && mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
+    && chown -R www-data:www-data /var/www/html/storage \
+    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/database \
-    && chmod -R 775 /var/www/html/database 
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/database
 
-# Expose port 80
 EXPOSE 80
 
-# Run migrations at startup, then start Apache
+# Run migrations then start Apache
 CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
