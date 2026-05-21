@@ -33,14 +33,17 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
 # ✅ CRITICAL: Create SQLite database file and set permissions
+# ... (previous lines) ...
+
+# Ensure database directory and file exist with proper permissions
 RUN mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
     && chown -R www-data:www-data /var/www/html/database \
     && chmod -R 775 /var/www/html/database \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port 80
 EXPOSE 80
 
 # Run migrations at startup, then start Apache
-CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
+CMD ["sh", "-c", "php artisan migrate --force --seed && apache2-foreground"]
