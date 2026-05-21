@@ -43,4 +43,4 @@ RUN mkdir -p /var/www/html/database \
 EXPOSE 80
 
 # Run migrations at startup, then start Apache
-CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
+CMD ["sh", "-c", "php artisan migrate --force --seed && apache2-foreground"]
