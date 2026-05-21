@@ -166,7 +166,7 @@
     <div class="nav-container">
         <!-- Logo -->
         <a href="/" class="nav-logo">
-            <img src="{{ Storage::url('images/abd_logo.jpeg') }}" alt="Site Logo">
+          <img src="{{ asset('images/abd_logo.jpeg') }}" alt="Logo">
         </a>
 
         <!-- Menu Links -->
