@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Install system dependencies
+# Install system dependencies (SQLite only)
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -21,23 +21,24 @@ RUN a2enmod rewrite \
     && sed -i '/<Directory \/var\/www\/html\/public>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/sites-available/000-default.conf
 
 WORKDIR /var/www/html
+
+# Copy everything
 COPY . .
+
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install dependencies
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# ✅ CRITICAL: Create all necessary directories with proper permissions
-RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
-    && mkdir -p /var/www/html/bootstrap/cache \
+# ✅ CRITICAL: Force SQLite Config & Create DB File
+RUN echo "DB_CONNECTION=sqlite" >> .env \
+    && echo "DB_DATABASE=/var/www/html/database/database.sqlite" >> .env \
     && mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
-    && chown -R www-data:www-data /var/www/html/storage \
-    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/database \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/database
+    && chmod -R 775 /var/www/html/database \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
 
 EXPOSE 80
 
