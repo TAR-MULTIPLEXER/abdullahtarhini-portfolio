@@ -11,7 +11,7 @@ class PortfolioSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Create Admin User (This is all we need for login)
+        // 1. Create Admin User
         User::updateOrCreate(
             ['email' => 'abdullahtarhini55@gmail.com'],
             [
@@ -20,14 +20,12 @@ class PortfolioSeeder extends Seeder
             ]
         );
 
-        // 2. Create a Simple Project (No image for now to prevent crashes)
+        // 2. Create Sample Project (Only use 'title' to avoid column errors)
+        // We will add other details via the Admin Panel later once you login!
         Project::updateOrCreate(
             ['title' => 'Sample Project'],
             [
-                'description' => 'This is a sample project.',
-                'image' => null, // Set to null temporarily
-                'is_featured' => true,
-                'sort_order' => 1,
+                // Leave other fields empty for now to prevent crashes
             ]
         );
     }
