@@ -15,9 +15,11 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd intl zip
 
 # ✅ Increase PHP Upload Limits
-RUN echo "upload_max_filesize = 50M" >> /usr/local/etc/php/conf.d/uploads.ini \
+RUN echo "upload_max_filesize = 50M" > /usr/local/etc/php/conf.d/uploads.ini \
     && echo "post_max_size = 50M" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini
+    && echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "file_uploads = On" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "upload_tmp_dir = /tmp" >> /usr/local/etc/php/conf.d/uploads.ini
 
 # Enable Apache modules and configure for Laravel
 RUN a2enmod rewrite \
@@ -32,7 +34,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# ✅ CRITICAL: Setup Storage, Symlink, Folders, and Permissions
+# ✅ CRITICAL: Setup Storage, Symlink, Folders
 RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
     && mkdir -p /var/www/html/bootstrap/cache \
     && mkdir -p /var/www/html/database \
@@ -40,16 +42,10 @@ RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
     && mkdir -p /var/www/html/storage/app/public/projects/covers \
     && mkdir -p /var/www/html/storage/app/public/projects/gallery \
     && mkdir -p /var/www/html/storage/app/public/projects/pdfs \
-    && php artisan storage:link \
-    && chown -R www-data:www-data /var/www/html/storage \
-    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html/database \
-    && chown -R www-data:www-data /var/www/html/public \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/database
+    && php artisan storage:link
 
 EXPOSE 80
 
-# Run migrations and seeds, then start Apache
-CMD ["sh", "-c", "php artisan migrate --force --seed && apache2-foreground"]
+# ✅ FIX PERMISSIONS AT RUNTIME (This is the key!)
+# We change ownership EVERY TIME the container starts to ensure it's correct
+CMD ["sh", "-c", "chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database /tmp && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database /tmp && php artisan migrate --force --seed && apache2-foreground"]
