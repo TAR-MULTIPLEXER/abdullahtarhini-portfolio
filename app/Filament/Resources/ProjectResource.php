@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage; // ✅ Required for file deletion
 
 class ProjectResource extends Resource
 {
@@ -21,25 +22,6 @@ class ProjectResource extends Resource
     {
         return $form
             ->schema([
-                // ===== TEST UPLOAD FIELD (DELETE THIS LATER) =====
-Forms\Components\Section::make('🧪 TEST UPLOAD')
-    ->schema([
-        Forms\Components\FileUpload::make('test_image')
-            ->label('Test Upload (Ignore this field)')
-            ->image()
-            ->directory('test-uploads')
-            ->visibility('public')
-            ->required(false)
-            // ✅ Force synchronous save to bypass Livewire AJAX
-            ->saveUploadedFileUsing(function ($component, $file) {
-                // Save file to storage/app/public/test-uploads
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->storeAs('public/test-uploads', $filename);
-                // Return the path relative to 'public/'
-                return 'test-uploads/' . $filename;
-            }),
-    ]),
-// ===== END TEST FIELD =====
                 // ===== BASIC INFORMATION =====
                 Forms\Components\Section::make('Basic Information')
                     ->schema([
@@ -147,11 +129,15 @@ Forms\Components\Section::make('🧪 TEST UPLOAD')
                             ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)')
                             ->required()
                             ->columnSpanFull()
-                            // ✅ BYPASS LIVELWIRE 401: Use native Laravel storage
-                            ->saveUploadedFileUsing(function (\Filament\Forms\Components\FileUpload $component, \Illuminate\Http\UploadedFile $file) {
-                                $filename = $file->hashName();
-                                $path = $file->storeAs('public/projects/covers', $filename);
-                                return $path ? str_replace('public/', '', $path) : null;
+                            // ✅ BYPASS LIVELWIRE AJAX: Save file synchronously on form submit
+                            ->saveUploadedFileUsing(function ($file) {
+                                if (!$file) return null;
+                                return $file->store('projects/covers', 'public');
+                            })
+                            ->deleteUploadedFileUsing(function ($record, $file) {
+                                if ($file) {
+                                    Storage::disk('public')->delete($file);
+                                }
                             }),
                         
                         // ===== Gallery Images with Descriptions =====
@@ -163,11 +149,15 @@ Forms\Components\Section::make('🧪 TEST UPLOAD')
                                     ->image()
                                     ->directory('projects/gallery')
                                     ->required()
-                                    // ✅ BYPASS LIVELWIRE 401: Use native Laravel storage
-                                    ->saveUploadedFileUsing(function (\Filament\Forms\Components\FileUpload $component, \Illuminate\Http\UploadedFile $file) {
-                                        $filename = $file->hashName();
-                                        $path = $file->storeAs('public/projects/gallery', $filename);
-                                        return $path ? str_replace('public/', '', $path) : null;
+                                    // ✅ BYPASS LIVELWIRE AJAX: Save file synchronously on form submit
+                                    ->saveUploadedFileUsing(function ($file) {
+                                        if (!$file) return null;
+                                        return $file->store('projects/gallery', 'public');
+                                    })
+                                    ->deleteUploadedFileUsing(function ($state) {
+                                        if ($state) {
+                                            Storage::disk('public')->delete($state);
+                                        }
                                     }),
                                 
                                 Forms\Components\Textarea::make('description')
