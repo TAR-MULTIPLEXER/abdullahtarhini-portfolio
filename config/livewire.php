@@ -35,11 +35,11 @@ return [
     | Temporary File Uploads
     |---------------------------------------------------------------------------
     */
-       'temporary_file_upload' => [
+           'temporary_file_upload' => [
         'disk' => 'public',        // ✅ MUST be public
         'rules' => ['file', 'max:12288'],
         'directory' => 'livewire-tmp',
-        'middleware' => null,      // ✅ CHANGE TO NULL TO BYPASS MIDDLEWARE
+        'middleware' => ['web', 'auth'], // ✅ ADD THIS: Force web and auth middleware
         'preview_mimes' => [
             'png', 'gif', 'bmp', 'svg', 'wav', 'mp4',
             'mov', 'avi', 'wmv', 'mp3', 'm4a',
