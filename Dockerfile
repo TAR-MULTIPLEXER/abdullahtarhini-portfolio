@@ -27,11 +27,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# ✅ CRITICAL: Setup Storage, Symlink, and Permissions
+# ✅ CRITICAL: Setup Storage, Symlink, Folders, and Permissions
 RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
     && mkdir -p /var/www/html/bootstrap/cache \
     && mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
+    && mkdir -p /var/www/html/storage/app/public/projects/covers \
+    && mkdir -p /var/www/html/storage/app/public/projects/gallery \
+    && mkdir -p /var/www/html/storage/app/public/projects/pdfs \
     && php artisan storage:link \
     && chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/bootstrap/cache \
