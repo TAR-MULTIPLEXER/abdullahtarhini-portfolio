@@ -33,6 +33,7 @@ class Project extends Model
     'is_featured',
     'sort_order',
     'show_gallery_description',
+    'test_image',
 ];
 
     protected $casts = [

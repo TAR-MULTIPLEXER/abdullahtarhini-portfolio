@@ -21,6 +21,25 @@ class ProjectResource extends Resource
     {
         return $form
             ->schema([
+                // ===== TEST UPLOAD FIELD (DELETE THIS LATER) =====
+Forms\Components\Section::make('🧪 TEST UPLOAD')
+    ->schema([
+        Forms\Components\FileUpload::make('test_image')
+            ->label('Test Upload (Ignore this field)')
+            ->image()
+            ->directory('test-uploads')
+            ->visibility('public')
+            ->required(false)
+            // ✅ Force synchronous save to bypass Livewire AJAX
+            ->saveUploadedFileUsing(function ($component, $file) {
+                // Save file to storage/app/public/test-uploads
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/test-uploads', $filename);
+                // Return the path relative to 'public/'
+                return 'test-uploads/' . $filename;
+            }),
+    ]),
+// ===== END TEST FIELD =====
                 // ===== BASIC INFORMATION =====
                 Forms\Components\Section::make('Basic Information')
                     ->schema([
