@@ -33,7 +33,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# ✅ CRITICAL: Create ALL necessary folders manually
+# ✅ NUCLEAR PERMISSIONS FIX
 RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
     && mkdir -p /var/www/html/storage/app/public/projects/covers \
     && mkdir -p /var/www/html/storage/app/public/projects/gallery \
@@ -43,15 +43,11 @@ RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
     && mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
     && php artisan storage:link \
-    && chown -R www-data:www-data /var/www/html/storage \
-    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html/database \
-    && chown -R www-data:www-data /var/www/html/public \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/database
+    && chmod -R 777 /var/www/html/storage \
+    && chmod -R 777 /var/www/html/bootstrap/cache \
+    && chmod -R 777 /var/www/html/database \
+    && chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
-# Run migrations and seeds, then start Apache
 CMD ["sh", "-c", "php artisan migrate --force --seed && apache2-foreground"]
