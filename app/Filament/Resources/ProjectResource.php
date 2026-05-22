@@ -126,7 +126,7 @@ class ProjectResource extends Resource
                             ->imageResizeTargetWidth('1200')
                             ->imageResizeTargetHeight('675')
                             ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)')
-                            ->required()
+                            
                             ->columnSpanFull(),
                         
                         // ===== Gallery Images with Descriptions =====
