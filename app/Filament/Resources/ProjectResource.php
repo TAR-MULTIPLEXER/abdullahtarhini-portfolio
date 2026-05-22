@@ -84,7 +84,7 @@ class ProjectResource extends Resource
                             ->helperText('Optional description for the image gallery (e.g., "Screenshots from the POS system")'),
                     ]),
 
-                // ===== PROJECT PDFs (NEW SECTION) =====
+                // ===== PROJECT PDFs =====
                 Forms\Components\Section::make('Project Documents (PDFs)')
                     ->schema([
                         Forms\Components\Repeater::make('pdfs')
@@ -127,7 +127,13 @@ class ProjectResource extends Resource
                             ->imageResizeTargetHeight('675')
                             ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)')
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            // ✅ BYPASS LIVELWIRE 401: Use native Laravel storage
+                            ->saveUploadedFileUsing(function (\Filament\Forms\Components\FileUpload $component, \Illuminate\Http\UploadedFile $file) {
+                                $filename = $file->hashName();
+                                $path = $file->storeAs('public/projects/covers', $filename);
+                                return $path ? str_replace('public/', '', $path) : null;
+                            }),
                         
                         // ===== Gallery Images with Descriptions =====
                         Forms\Components\Repeater::make('image_details')
@@ -137,7 +143,13 @@ class ProjectResource extends Resource
                                     ->label('Image')
                                     ->image()
                                     ->directory('projects/gallery')
-                                    ->required(),
+                                    ->required()
+                                    // ✅ BYPASS LIVELWIRE 401: Use native Laravel storage
+                                    ->saveUploadedFileUsing(function (\Filament\Forms\Components\FileUpload $component, \Illuminate\Http\UploadedFile $file) {
+                                        $filename = $file->hashName();
+                                        $path = $file->storeAs('public/projects/gallery', $filename);
+                                        return $path ? str_replace('public/', '', $path) : null;
+                                    }),
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
