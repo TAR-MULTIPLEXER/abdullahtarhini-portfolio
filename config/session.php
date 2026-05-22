@@ -199,7 +199,7 @@ return [
     |
     */
 
-    'same_site' => 'none', // <--- CHANGE FROM 'lax' TO 'none'
+    'same_site' => 'lax', // <--- CHANGE FROM 'lax' TO 'none'
 
     /*
     |--------------------------------------------------------------------------
