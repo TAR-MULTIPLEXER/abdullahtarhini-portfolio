@@ -35,11 +35,11 @@ return [
     | Temporary File Uploads
     |---------------------------------------------------------------------------
     */
-    'temporary_file_upload' => [
-        'disk' => 'public',        // ✅ CRITICAL: Use public disk for uploads
-        'rules' => ['file', 'max:12288'], // Allow up to 12MB
+       'temporary_file_upload' => [
+        'disk' => 'public',        // ✅ MUST be public
+        'rules' => ['file', 'max:12288'],
         'directory' => 'livewire-tmp',
-        'middleware' => 'throttle:60,1',
+        'middleware' => null,      // ✅ CHANGE TO NULL TO BYPASS MIDDLEWARE
         'preview_mimes' => [
             'png', 'gif', 'bmp', 'svg', 'wav', 'mp4',
             'mov', 'avi', 'wmv', 'mp3', 'm4a',
