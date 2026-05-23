@@ -10,7 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage; // ✅ Required for file deletion
 
 class ProjectResource extends Resource
 {
@@ -117,31 +116,30 @@ class ProjectResource extends Resource
                 // ===== IMAGES & MEDIA =====
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
-                        // ===== COVER IMAGE =====
-                Forms\Components\FileUpload::make('cover_image')
-    ->label('Cover Image')
-    ->directory('projects/covers')
-    ->disk('public') // ✅ This points to the 'public' disk
-    ->saveUploadedFileUsing(function ($file) {
-        if (!$file) return null;
-        // ✅ Save directly to public/projects/covers
-        return $file->storeAs('projects/covers', $file->hashName(), 'public');
-    }),
-   
+                        // ===== COVER IMAGE (DEFAULT FILAMENT CODE) =====
+                        Forms\Components\FileUpload::make('cover_image')
+                            ->label('Cover Image (for project card)')
+                            ->image()
+                            ->directory('projects/covers')
+                            ->visibility('public')
+                            ->imageResizeMode('cover')
+                            ->imageCropAspectRatio('16:9')
+                            ->imageResizeTargetWidth('1200')
+                            ->imageResizeTargetHeight('675')
+                            ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)')
+                            ->required()
+                            ->columnSpanFull(),
                         
                         // ===== Gallery Images with Descriptions =====
                         Forms\Components\Repeater::make('image_details')
                             ->label('Gallery Images with Descriptions')
                             ->schema([
-                         Forms\Components\FileUpload::make('image')
-    ->label('Image')
-    ->directory('projects/gallery')
-    ->disk('public')
-    ->saveUploadedFileUsing(function ($file) {
-        if (!$file) return null;
-        // ✅ Save directly to public/projects/gallery
-        return $file->storeAs('projects/gallery', $file->hashName(), 'public');
-    }),
+                                Forms\Components\FileUpload::make('image')
+                                    ->label('Image')
+                                    ->image()
+                                    ->directory('projects/gallery')
+                                    ->visibility('public')
+                                    ->required(),
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
