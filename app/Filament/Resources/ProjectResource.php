@@ -118,14 +118,14 @@ class ProjectResource extends Resource
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
                         // ===== COVER IMAGE =====
-                 Forms\Components\FileUpload::make('cover_image')
+                Forms\Components\FileUpload::make('cover_image')
     ->label('Cover Image')
     ->directory('projects/covers')
-    ->disk('public') // ✅ Tell it to use the 'public' disk
+    ->disk('public') // ✅ This points to the 'public' disk
     ->saveUploadedFileUsing(function ($file) {
-        // ✅ This is the exact code that worked in our Laravel test!
         if (!$file) return null;
-        return $file->store('projects/covers', 'public');
+        // ✅ Save directly to public/projects/covers
+        return $file->storeAs('projects/covers', $file->hashName(), 'public');
     }),
    
                         
@@ -139,7 +139,8 @@ class ProjectResource extends Resource
     ->disk('public')
     ->saveUploadedFileUsing(function ($file) {
         if (!$file) return null;
-        return $file->store('projects/gallery', 'public');
+        // ✅ Save directly to public/projects/gallery
+        return $file->storeAs('projects/gallery', $file->hashName(), 'public');
     }),
                                 
                                 Forms\Components\Textarea::make('description')
