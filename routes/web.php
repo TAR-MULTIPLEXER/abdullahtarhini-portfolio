@@ -143,3 +143,22 @@ Route::post('/test-upload-page', function (Request $request) {
         return back()->with('error', '❌ Error: ' . $e->getMessage());
     }
 })->name('test.upload');
+Route::get('/debug-db', function () {
+    try {
+        $count = \App\Models\Project::count();
+        $sample = \App\Models\Project::first();
+        $dbPath = database_path('database.sqlite');
+        $perms = substr(sprintf('%o', fileperms($dbPath)), -4);
+        
+        return "
+        <h1>✅ Database OK</h1>
+        <p><strong>Projects:</strong> $count</p>
+        <p><strong>Sample:</strong> " . ($sample ? $sample->title : 'None') . "</p>
+        <p><strong>DB Path:</strong> $dbPath</p>
+        <p><strong>Permissions:</strong> $perms</p>
+        <p><a href='/'>← Home</a></p>
+        ";
+    } catch (\Exception $e) {
+        return "<h1>❌ Database Error</h1><pre>" . $e->getMessage() . "</pre>";
+    }
+});
