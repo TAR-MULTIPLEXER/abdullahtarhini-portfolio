@@ -33,15 +33,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# ✅ CRITICAL: Create ALL necessary folders manually
-RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
-    && mkdir -p /var/www/html/storage/app/public/projects/covers \
+# ✅ CRITICAL: Create the REAL folders where Laravel saves files
+RUN mkdir -p /var/www/html/storage/app/public/projects/covers \
     && mkdir -p /var/www/html/storage/app/public/projects/gallery \
     && mkdir -p /var/www/html/storage/app/public/projects/pdfs \
-    && mkdir -p /var/www/html/storage/app/public/livewire-tmp \
+    && mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
     && mkdir -p /var/www/html/bootstrap/cache \
     && mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
+    && rm -rf /var/www/html/public/storage \
     && php artisan storage:link \
     && chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/bootstrap/cache \
