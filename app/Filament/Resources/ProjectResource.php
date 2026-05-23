@@ -127,7 +127,7 @@ class ProjectResource extends Resource
                             ->imageResizeTargetWidth('1200')
                             ->imageResizeTargetHeight('675')
                             ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)')
-                            ->required()
+                          
                             ->columnSpanFull(),
                         
                         // ===== Gallery Images with Descriptions =====
@@ -138,8 +138,7 @@ class ProjectResource extends Resource
                                     ->label('Image')
                                     ->image()
                                     ->directory('projects/gallery')
-                                    ->visibility('public')
-                                    ->required(),
+                                    ->visibility('public'),
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
