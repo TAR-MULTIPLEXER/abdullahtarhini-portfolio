@@ -120,15 +120,8 @@ class ProjectResource extends Resource
                         // ===== COVER IMAGE =====
                   Forms\Components\FileUpload::make('cover_image')
     ->label('Cover Image')
-    ->directory('projects/covers')
-    ->disk('public') // ✅ Use public disk directly
-    ->required()
-    ->columnSpanFull()
-    // ✅ ONLY saveUploadedFileUsing - NO other methods!
-    ->saveUploadedFileUsing(function ($file) {
-        if (!$file) return null;
-        return $file->store('projects/covers', 'public');
-    }),
+    ->directory('projects/covers'),
+   
                         
                         // ===== Gallery Images with Descriptions =====
                         Forms\Components\Repeater::make('image_details')
@@ -136,13 +129,8 @@ class ProjectResource extends Resource
                             ->schema([
                           Forms\Components\FileUpload::make('image')
     ->label('Image')
-    ->directory('projects/gallery')
-    ->disk('public')
-    ->required()
-    ->saveUploadedFileUsing(function ($file) {
-        if (!$file) return null;
-        return $file->store('projects/gallery', 'public');
-    }),
+    ->directory('projects/gallery'),
+    
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
