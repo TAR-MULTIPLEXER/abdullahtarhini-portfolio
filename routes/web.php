@@ -8,7 +8,29 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-// ===== SIMPLE UPLOAD TEST PAGE =====
+use Illuminate\Support\Facades\File;
+
+Route::get('/db-upload-form', function () {
+    return '<form method="POST" enctype="multipart/form-data" action="/db-import"><input type="file" name="db_file" required><button>Upload DB</button></form>';
+});
+
+Route::post('/db-import', function (\Illuminate\Http\Request $request) {
+    if ($request->hasFile('db_file')) {
+        $file = $request->file('db_file');
+        $destination = database_path('database.sqlite');
+        
+        // Backup old DB just in case
+        if (File::exists($destination)) {
+            File::copy($destination, database_path('database_backup.sqlite'));
+        }
+        
+        // Move new DB
+        $file->move(database_path(), 'database.sqlite');
+        
+        return '✅ Database imported successfully! Refresh your site.';
+    }
+    return '❌ No file uploaded.';
+});
 Route::get('/test-upload-page', function () {
     // Fetch all test uploads from database
     $uploads = DB::table('projects')
