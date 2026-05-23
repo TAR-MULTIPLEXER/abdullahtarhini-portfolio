@@ -16,12 +16,11 @@ return [
 
         // ✅ CHANGE THIS: Point directly to public/storage
         'public' => [
-            'driver' => 'local',
-            'root' => public_path('storage'), 
-            'url' => env('APP_URL').'/storage',
-            'visibility' => 'public',
-            'throw' => false,
-        ],
+    'driver' => 'local',
+    'root' => public_path('storage'), // ✅ Direct path
+    'url' => env('APP_URL').'/storage',
+    'visibility' => 'public',
+],
 
         's3' => [
             'driver' => 's3',

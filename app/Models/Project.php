@@ -36,14 +36,13 @@ class Project extends Model
     'test_image',
 ];
 
-    protected $casts = [
-        'images' => 'array',
-        'image_details' => 'array',
-        'specifications' => 'array',
-        'is_featured' => 'boolean',
-          'pdfs' => 'array',
-        'show_gallery_description' => 'boolean',
-    ];
+   protected $casts = [
+    'image_details' => 'array', // Cast JSON back to array when retrieving
+    'specifications' => 'array',
+    'is_featured' => 'boolean',
+    'pdfs' => 'array',
+    'show_gallery_description' => 'boolean',
+];
 
     public static function boot()
     {

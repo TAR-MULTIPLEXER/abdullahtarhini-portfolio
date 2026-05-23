@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectResource extends Resource
 {
@@ -101,6 +102,7 @@ class ProjectResource extends Resource
                                     ->label('PDF File')
                                     ->acceptedFileTypes(['application/pdf'])
                                     ->directory('projects/pdfs')
+                                    ->disk('public')
                                     ->visibility('public')
                                     ->required()
                                     ->columnSpanFull(),
@@ -116,27 +118,22 @@ class ProjectResource extends Resource
                 // ===== IMAGES & MEDIA =====
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
-                        // ===== COVER IMAGE (DEFAULT FILAMENT CODE) =====
-                   Forms\Components\FileUpload::make('cover_image')
-    ->label('Cover Image')
-    ->image()
-    ->directory('projects/covers')
-    ->disk('public') // ✅ Uses the 'public' disk we configured
-    ->visibility('public')
-    // ->required()
-    ->columnSpanFull(),
+                        // ===== COVER IMAGE - PLAIN HTML INPUT =====
+                        Forms\Components\Field::make('cover_image')
+                            ->label('Cover Image (for project card)')
+                            ->view('filament.forms.components.plain-file-upload')
+                            ->required()
+                            ->columnSpanFull()
+                            ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)'),
                         
-                        // ===== Gallery Images with Descriptions =====
+                        // ===== Gallery Images with Descriptions - PLAIN HTML INPUT =====
                         Forms\Components\Repeater::make('image_details')
                             ->label('Gallery Images with Descriptions')
                             ->schema([
-                               Forms\Components\FileUpload::make('image')
-    ->label('Image')
-    ->image()
-    ->directory('projects/gallery')
-    ->disk('public')
-    ->visibility('public'),
-    // ->required(),
+                                Forms\Components\Field::make('image')
+                                    ->label('Image')
+                                    ->view('filament.forms.components.plain-file-upload')
+                                    ->required(),
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
@@ -208,6 +205,155 @@ class ProjectResource extends Resource
                             ->helperText('Display the gallery description on project detail page'),
                     ])->columns(3),
             ]);
+    }
+
+    // ✅ HANDLE FILE UPLOAD ON CREATE (RAW PHP)
+    protected static function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
+    {
+        // Handle cover image upload
+        if (isset($data['cover_image']) && $data['cover_image'] instanceof \Illuminate\Http\UploadedFile) {
+            $file = $data['cover_image'];
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('storage/projects/covers');
+            
+            // Ensure directory exists
+            if (!is_dir($destinationPath)) {
+                mkdir($destinationPath, 0775, true);
+            }
+            
+            // Move file using raw PHP (same as test-upload.php)
+            if ($file->move($destinationPath, $filename)) {
+                $data['cover_image'] = 'projects/covers/' . $filename;
+            }
+        }
+        
+        // Handle gallery images upload
+        if (isset($data['image_details']) && is_array($data['image_details'])) {
+            foreach ($data['image_details'] as &$imageDetail) {
+                if (isset($imageDetail['image']) && $imageDetail['image'] instanceof \Illuminate\Http\UploadedFile) {
+                    $file = $imageDetail['image'];
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $destinationPath = public_path('storage/projects/gallery');
+                    
+                    if (!is_dir($destinationPath)) {
+                        mkdir($destinationPath, 0775, true);
+                    }
+                    
+                    if ($file->move($destinationPath, $filename)) {
+                        $imageDetail['image'] = 'projects/gallery/' . $filename;
+                    }
+                }
+            }
+            $data['image_details'] = json_encode($data['image_details']);
+        }
+        
+        // Handle PDFs upload
+        if (isset($data['pdfs']) && is_array($data['pdfs'])) {
+            foreach ($data['pdfs'] as &$pdf) {
+                if (isset($pdf['path']) && $pdf['path'] instanceof \Illuminate\Http\UploadedFile) {
+                    $file = $pdf['path'];
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $destinationPath = public_path('storage/projects/pdfs');
+                    
+                    if (!is_dir($destinationPath)) {
+                        mkdir($destinationPath, 0775, true);
+                    }
+                    
+                    if ($file->move($destinationPath, $filename)) {
+                        $pdf['path'] = 'projects/pdfs/' . $filename;
+                    }
+                }
+            }
+            $data['pdfs'] = json_encode($data['pdfs']);
+        }
+        
+        return static::getModel()::create($data);
+    }
+
+    // ✅ HANDLE FILE UPLOAD ON UPDATE (RAW PHP)
+    protected static function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
+    {
+        // Handle cover image upload
+        if (isset($data['cover_image']) && $data['cover_image'] instanceof \Illuminate\Http\UploadedFile) {
+            // Delete old image if exists
+            if ($record->cover_image) {
+                $oldPath = public_path('storage/' . $record->cover_image);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+            
+            $file = $data['cover_image'];
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('storage/projects/covers');
+            
+            if (!is_dir($destinationPath)) {
+                mkdir($destinationPath, 0775, true);
+            }
+            
+            if ($file->move($destinationPath, $filename)) {
+                $data['cover_image'] = 'projects/covers/' . $filename;
+            }
+        }
+        
+        // Handle gallery images upload
+        if (isset($data['image_details']) && is_array($data['image_details'])) {
+            foreach ($data['image_details'] as &$imageDetail) {
+                if (isset($imageDetail['image']) && $imageDetail['image'] instanceof \Illuminate\Http\UploadedFile) {
+                    // Delete old image if exists
+                    if (isset($imageDetail['image']) && is_string($imageDetail['image'])) {
+                        $oldPath = public_path('storage/' . $imageDetail['image']);
+                        if (file_exists($oldPath)) {
+                            unlink($oldPath);
+                        }
+                    }
+                    
+                    $file = $imageDetail['image'];
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $destinationPath = public_path('storage/projects/gallery');
+                    
+                    if (!is_dir($destinationPath)) {
+                        mkdir($destinationPath, 0775, true);
+                    }
+                    
+                    if ($file->move($destinationPath, $filename)) {
+                        $imageDetail['image'] = 'projects/gallery/' . $filename;
+                    }
+                }
+            }
+            $data['image_details'] = json_encode($data['image_details']);
+        }
+        
+        // Handle PDFs upload
+        if (isset($data['pdfs']) && is_array($data['pdfs'])) {
+            foreach ($data['pdfs'] as &$pdf) {
+                if (isset($pdf['path']) && $pdf['path'] instanceof \Illuminate\Http\UploadedFile) {
+                    // Delete old PDF if exists
+                    if (isset($pdf['path']) && is_string($pdf['path'])) {
+                        $oldPath = public_path('storage/' . $pdf['path']);
+                        if (file_exists($oldPath)) {
+                            unlink($oldPath);
+                        }
+                    }
+                    
+                    $file = $pdf['path'];
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $destinationPath = public_path('storage/projects/pdfs');
+                    
+                    if (!is_dir($destinationPath)) {
+                        mkdir($destinationPath, 0775, true);
+                    }
+                    
+                    if ($file->move($destinationPath, $filename)) {
+                        $pdf['path'] = 'projects/pdfs/' . $filename;
+                    }
+                }
+            }
+            $data['pdfs'] = json_encode($data['pdfs']);
+        }
+        
+        $record->update($data);
+        return $record;
     }
 
     public static function table(Table $table): Table
