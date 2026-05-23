@@ -118,47 +118,43 @@ class ProjectResource extends Resource
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
                         // ===== COVER IMAGE =====
-                        Forms\Components\FileUpload::make('cover_image')
-                            ->label('Cover Image (for project card)')
-                            ->image()
-                            ->directory('projects/covers')
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('16:9')
-                            ->imageResizeTargetWidth('1200')
-                            ->imageResizeTargetHeight('675')
-                            ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)')
-                            ->required()
-                            ->columnSpanFull()
-                            // ✅ BYPASS LIVELWIRE AJAX: Save file synchronously on form submit
-                            ->saveUploadedFileUsing(function ($file) {
-                                if (!$file) return null;
-                                return $file->store('projects/covers', 'public');
-                            })
-                            ->deleteUploadedFileUsing(function ($record, $file) {
-                                if ($file) {
-                                    Storage::disk('public')->delete($file);
-                                }
-                            }),
+                      Forms\Components\FileUpload::make('cover_image')
+    ->label('Cover Image')
+    ->directory('projects/covers')
+    ->visibility('public')
+    ->required()
+    ->columnSpanFull()
+    // ✅ NO ->image() method! This prevents Livewire AJAX validation.
+    ->saveUploadedFileUsing(function ($file) {
+        if (!$file) return null;
+        // Standard Laravel save
+        return $file->store('projects/covers', 'public');
+    })
+    ->deleteUploadedFileUsing(function ($record, $state) {
+        if ($state) {
+            Storage::disk('public')->delete($state);
+        }
+    }),
                         
                         // ===== Gallery Images with Descriptions =====
                         Forms\Components\Repeater::make('image_details')
                             ->label('Gallery Images with Descriptions')
                             ->schema([
-                                Forms\Components\FileUpload::make('image')
-                                    ->label('Image')
-                                    ->image()
-                                    ->directory('projects/gallery')
-                                    ->required()
-                                    // ✅ BYPASS LIVELWIRE AJAX: Save file synchronously on form submit
-                                    ->saveUploadedFileUsing(function ($file) {
-                                        if (!$file) return null;
-                                        return $file->store('projects/gallery', 'public');
-                                    })
-                                    ->deleteUploadedFileUsing(function ($state) {
-                                        if ($state) {
-                                            Storage::disk('public')->delete($state);
-                                        }
-                                    }),
+                              Forms\Components\FileUpload::make('image')
+    ->label('Image')
+    ->directory('projects/gallery')
+    ->visibility('public')
+    ->required()
+    // ✅ NO ->image() method!
+    ->saveUploadedFileUsing(function ($file) {
+        if (!$file) return null;
+        return $file->store('projects/gallery', 'public');
+    })
+    ->deleteUploadedFileUsing(function ($state) {
+        if ($state) {
+            Storage::disk('public')->delete($state);
+        }
+    }),
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')

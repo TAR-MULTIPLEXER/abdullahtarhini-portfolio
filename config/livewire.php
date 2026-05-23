@@ -35,18 +35,14 @@ return [
     | Temporary File Uploads
     |---------------------------------------------------------------------------
     */
-           'temporary_file_upload' => [
-        'disk' => 'public',        // ✅ MUST be public
-        'rules' => ['file', 'max:12288'],
-        'directory' => 'livewire-tmp',
-        'middleware' => ['web', 'auth'], // ✅ ADD THIS: Force web and auth middleware
-        'preview_mimes' => [
-            'png', 'gif', 'bmp', 'svg', 'wav', 'mp4',
-            'mov', 'avi', 'wmv', 'mp3', 'm4a',
-            'jpg', 'jpeg', 'mpga', 'webp', 'wma',
-        ],
+             'temporary_file_upload' => [
+        'disk' => null, // ✅ Set to null to disable Livewire's internal handling
+        'rules' => null,
+        'directory' => null,
+        'middleware' => null,
+        'preview_mimes' => [],
         'max_upload_time' => 5,
-        'cleanup' => true,
+        'cleanup' => false,
     ],
 
     /*
