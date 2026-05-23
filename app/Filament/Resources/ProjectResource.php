@@ -122,7 +122,7 @@ class ProjectResource extends Resource
                         Forms\Components\Field::make('cover_image')
                             ->label('Cover Image (for project card)')
                             ->view('filament.forms.components.plain-file-upload')
-                            ->required()
+                            
                             ->columnSpanFull()
                             ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)'),
                         
@@ -132,8 +132,8 @@ class ProjectResource extends Resource
                             ->schema([
                                 Forms\Components\Field::make('image')
                                     ->label('Image')
-                                    ->view('filament.forms.components.plain-file-upload')
-                                    ->required(),
+                                    ->view('filament.forms.components.plain-file-upload'),
+                                    
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
