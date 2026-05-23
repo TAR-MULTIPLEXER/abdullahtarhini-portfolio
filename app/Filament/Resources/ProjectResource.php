@@ -120,7 +120,8 @@ class ProjectResource extends Resource
                         // ===== COVER IMAGE =====
                   Forms\Components\FileUpload::make('cover_image')
     ->label('Cover Image')
-    ->directory('projects/covers'),
+    ->directory('projects/covers')
+    ->required(),
    
                         
                         // ===== Gallery Images with Descriptions =====
@@ -129,7 +130,8 @@ class ProjectResource extends Resource
                             ->schema([
                           Forms\Components\FileUpload::make('image')
     ->label('Image')
-    ->directory('projects/gallery'),
+    ->directory('projects/gallery')
+    ->required(),
     
                                 
                                 Forms\Components\Textarea::make('description')
