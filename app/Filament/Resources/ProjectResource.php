@@ -118,22 +118,16 @@ class ProjectResource extends Resource
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
                         // ===== COVER IMAGE =====
-                   Forms\Components\FileUpload::make('cover_image')
+                  Forms\Components\FileUpload::make('cover_image')
     ->label('Cover Image')
     ->directory('projects/covers')
-    ->visibility('public')
+    ->disk('public') // ✅ Use public disk directly
     ->required()
     ->columnSpanFull()
-    // ✅ NO ->image()! NO ->acceptedFileTypes()!
-    // This forces it to be a plain HTML input.
+    // ✅ ONLY saveUploadedFileUsing - NO other methods!
     ->saveUploadedFileUsing(function ($file) {
         if (!$file) return null;
         return $file->store('projects/covers', 'public');
-    })
-    ->deleteUploadedFileUsing(function ($record, $state) {
-        if ($state) {
-            Storage::disk('public')->delete($state);
-        }
     }),
                         
                         // ===== Gallery Images with Descriptions =====
@@ -143,17 +137,11 @@ class ProjectResource extends Resource
                           Forms\Components\FileUpload::make('image')
     ->label('Image')
     ->directory('projects/gallery')
-    ->visibility('public')
+    ->disk('public')
     ->required()
-    // ✅ NO ->image()!
     ->saveUploadedFileUsing(function ($file) {
         if (!$file) return null;
         return $file->store('projects/gallery', 'public');
-    })
-    ->deleteUploadedFileUsing(function ($state) {
-        if ($state) {
-            Storage::disk('public')->delete($state);
-        }
     }),
                                 
                                 Forms\Components\Textarea::make('description')
