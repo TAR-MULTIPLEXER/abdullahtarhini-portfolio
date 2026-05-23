@@ -35,15 +35,15 @@ return [
     | Temporary File Uploads
     |---------------------------------------------------------------------------
     */
-           'temporary_file_upload' => [
-        'disk' => null,        // ✅ Disable Livewire's disk handling
-        'rules' => null,       // ✅ Disable Livewire's rules
-        'directory' => null,   // ✅ Disable Livewire's directory
-        'middleware' => null,  // ✅ Disable Livewire's middleware (stops 401)
-        'preview_mimes' => [], // ✅ Disable previews
-        'max_upload_time' => 5,
-        'cleanup' => false,
-    ],
+     'temporary_file_upload' => [
+    'disk' => 'public', // ✅ Use public disk for uploads
+    'rules' => ['file', 'max:12288'],
+    'directory' => 'livewire-tmp',
+    'middleware' => null, // Keep this to bypass 401
+    'preview_mimes' => ['png', 'gif', 'bmp', 'svg', 'jpg', 'jpeg', 'webp'],
+    'max_upload_time' => 5,
+    'cleanup' => true,
+],
 
     /*
     |---------------------------------------------------------------------------

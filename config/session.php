@@ -199,7 +199,7 @@ return [
     |
     */
 
-    'same_site' => 'lax', // <--- CHANGE FROM 'lax' TO 'none'
+    'same_site' => 'none', // ✅ Allows cookies on HTTPS AJAX requests
 
     /*
     |--------------------------------------------------------------------------

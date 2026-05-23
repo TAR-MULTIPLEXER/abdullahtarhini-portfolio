@@ -38,9 +38,9 @@ return [
             'report' => false,
         ],
 
-        'public' => [
+     'public' => [
     'driver' => 'local',
-    'root' => public_path('storage'), // ✅ Point to public/storage
+    'root' => storage_path('app/public'), // ✅ CORRECT: Standard Laravel path
     'url' => env('APP_URL').'/storage',
     'visibility' => 'public',
 ],
