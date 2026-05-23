@@ -1,52 +1,58 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
-// Test Route for Laravel Uploads
-Route::match(['get', 'post'], '/laravel-upload-test', function (Request $request) {
-    $message = '';
-    $type = '';
-
-    if ($request->isMethod('post')) {
-        // 1. Check Session
-        $sessionId = session()->getId();
-        
-        // 2. Check CSRF
-        $csrfValid = $request->hasSession() && $request->session()->token() === $request->input('_token');
-
-        // 3. Handle File
-        if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
-            
-            try {
-                // Try to store it using Laravel's Storage facade
-                $path = $file->store('test-uploads', 'public');
-                
-                if ($path) {
-                    $message = "✅ SUCCESS! File stored at: storage/app/public/" . $path;
-                    $type = 'success';
-                } else {
-                    $message = "❌ FAILED: Storage::put returned false.";
-                    $type = 'error';
-                }
-            } catch (\Exception $e) {
-                $message = "❌ EXCEPTION: " . $e->getMessage();
-                $type = 'error';
-            }
-        } else {
-            $message = "⚠️ No file received in POST request.";
-            $type = 'warning';
+Route::post('/laravel-upload-test', function (Request $request) {
+    // Return raw JSON - no view, no Blade, no chance for 500 errors
+    $response = ['status' => 'received', 'files' => []];
+    
+    if ($request->hasFile('photo')) {
+        $file = $request->file('photo');
+        try {
+            $path = $file->store('test-uploads', 'public');
+            $response['status'] = 'success';
+            $response['path'] = $path;
+            $response['original_name'] = $file->getClientOriginalName();
+        } catch (\Exception $e) {
+            $response['status'] = 'error';
+            $response['message'] = $e->getMessage();
         }
-
-        // Debug Info
-        $debug = [
-            'Session ID' => $sessionId,
-            'CSRF Valid' => $csrfValid ? 'YES' : 'NO',
-            'POST Data Size' => strlen(file_get_contents('php://input')),
-            'Files Count' => count($request->allFiles()),
-        ];
+    } else {
+        $response['status'] = 'no_file';
+        $response['post_data'] = $request->all();
+        $response['files'] = $request->files->all();
     }
+    
+    return response()->json($response);
+});
 
-    return view('upload-test', compact('message', 'type', 'debug'));
-})->name('laravel-upload-test');
+// Simple GET route to show a plain HTML form (no Blade)
+Route::get('/laravel-upload-test', function () {
+    $csrf = csrf_token();
+    return <<<HTML
+    <!DOCTYPE html>
+    <html>
+    <head><title>Upload Test</title></head>
+    <body>
+        <h2>Simple Laravel Upload Test</h2>
+        <form method="POST" enctype="multipart/form-data" action="/laravel-upload-test">
+            <input type="hidden" name="_token" value="$csrf">
+            <input type="file" name="photo" required>
+            <button type="submit">Upload</button>
+        </form>
+        <div id="result" style="margin-top:20px; padding:10px; border:1px solid #ccc;"></div>
+        <script>
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const res = await fetch(form.action, { method: 'POST', body: formData });
+            const data = await res.json();
+            document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+        });
+        </script>
+    </body>
+    </html>
+    HTML;
+});
