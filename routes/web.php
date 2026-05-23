@@ -1,38 +1,52 @@
 <?php
-
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
-Route::get('/debug-upload', function () {
-    try {
-        // Test 1: Is the disk writable?
-        Storage::disk('public')->put('test.txt', 'ok');
-        $read = Storage::disk('public')->get('test.txt');
-        Storage::disk('public')->delete('test.txt');
+// Test Route for Laravel Uploads
+Route::match(['get', 'post'], '/laravel-upload-test', function (Request $request) {
+    $message = '';
+    $type = '';
 
-        // Test 2: Is the session alive?
-        $session = session()->getId();
+    if ($request->isMethod('post')) {
+        // 1. Check Session
+        $sessionId = session()->getId();
+        
+        // 2. Check CSRF
+        $csrfValid = $request->hasSession() && $request->session()->token() === $request->input('_token');
 
-        // Test 3: Force Laravel to log what Livewire sees
-        Log::info('DEBUG: Storage OK, Session ID: ' . $session);
+        // 3. Handle File
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            
+            try {
+                // Try to store it using Laravel's Storage facade
+                $path = $file->store('test-uploads', 'public');
+                
+                if ($path) {
+                    $message = "✅ SUCCESS! File stored at: storage/app/public/" . $path;
+                    $type = 'success';
+                } else {
+                    $message = "❌ FAILED: Storage::put returned false.";
+                    $type = 'error';
+                }
+            } catch (\Exception $e) {
+                $message = "❌ EXCEPTION: " . $e->getMessage();
+                $type = 'error';
+            }
+        } else {
+            $message = "⚠️ No file received in POST request.";
+            $type = 'warning';
+        }
 
-        return response()->json([
-            'status' => '✅ SUCCESS',
-            'storage_writable' => true,
-            'session_id' => $session,
-            'last_laravel_log' => file_get_contents(storage_path('logs/laravel.log')) ?? 'No logs found',
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => '❌ FAILED',
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-        ]);
+        // Debug Info
+        $debug = [
+            'Session ID' => $sessionId,
+            'CSRF Valid' => $csrfValid ? 'YES' : 'NO',
+            'POST Data Size' => strlen(file_get_contents('php://input')),
+            'Files Count' => count($request->allFiles()),
+        ];
     }
-});
+
+    return view('upload-test', compact('message', 'type', 'debug'));
+})->name('laravel-upload-test');
