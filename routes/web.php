@@ -162,3 +162,13 @@ Route::get('/debug-db', function () {
         return "<h1>❌ Database Error</h1><pre>" . $e->getMessage() . "</pre>";
     }
 });
+// ===== TEMPORARY: RUN MIGRATIONS ROUTE =====
+Route::get('/run-migrations', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        $output = \Illuminate\Support\Facades\Artisan::output();
+        return "<h1>✅ Migrations Run</h1><pre>" . htmlspecialchars($output) . "</pre><p><a href='/'>← Home</a></p>";
+    } catch (\Exception $e) {
+        return "<h1>❌ Migration Error</h1><pre>" . $e->getMessage() . "</pre>";
+    }
+});
