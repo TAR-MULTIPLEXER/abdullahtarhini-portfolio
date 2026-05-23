@@ -118,21 +118,29 @@ class ProjectResource extends Resource
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
                         // ===== COVER IMAGE =====
-                  Forms\Components\FileUpload::make('cover_image')
+                 Forms\Components\FileUpload::make('cover_image')
     ->label('Cover Image')
     ->directory('projects/covers')
-    ->required(),
+    ->disk('public') // ✅ Tell it to use the 'public' disk
+    ->saveUploadedFileUsing(function ($file) {
+        // ✅ This is the exact code that worked in our Laravel test!
+        if (!$file) return null;
+        return $file->store('projects/covers', 'public');
+    }),
    
                         
                         // ===== Gallery Images with Descriptions =====
                         Forms\Components\Repeater::make('image_details')
                             ->label('Gallery Images with Descriptions')
                             ->schema([
-                          Forms\Components\FileUpload::make('image')
+                         Forms\Components\FileUpload::make('image')
     ->label('Image')
     ->directory('projects/gallery')
-    ->required(),
-    
+    ->disk('public')
+    ->saveUploadedFileUsing(function ($file) {
+        if (!$file) return null;
+        return $file->store('projects/gallery', 'public');
+    }),
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
