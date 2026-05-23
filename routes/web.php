@@ -69,11 +69,24 @@ Route::post('/db-import', function (Request $request) {
         $file = $request->file('db_file');
         $destination = database_path('database.sqlite');
         
+        // Backup old DB just in case
         if (File::exists($destination)) {
             File::copy($destination, database_path('database_backup.sqlite'));
         }
         
+        // Move new DB
         $file->move(database_path(), 'database.sqlite');
+        
+        // ✅ FIX PERMISSIONS - This is the critical step!
+        chmod($destination, 0664);
+        chown($destination, 'www-data');
+        chgrp($destination, 'www-data');
+        
+        // Also fix the entire database folder
+        $dbDir = database_path();
+        chmod($dbDir, 0775);
+        chown($dbDir, 'www-data');
+        chgrp($dbDir, 'www-data');
         
         return '✅ Database imported successfully! <a href="/">Refresh your site</a>.';
     }
