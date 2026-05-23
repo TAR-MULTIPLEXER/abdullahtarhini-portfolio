@@ -1,58 +1,38 @@
 <?php
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-Route::post('/laravel-upload-test', function (Request $request) {
-    // Return raw JSON - no view, no Blade, no chance for 500 errors
-    $response = ['status' => 'received', 'files' => []];
-    
-    if ($request->hasFile('photo')) {
-        $file = $request->file('photo');
-        try {
-            $path = $file->store('test-uploads', 'public');
-            $response['status'] = 'success';
-            $response['path'] = $path;
-            $response['original_name'] = $file->getClientOriginalName();
-        } catch (\Exception $e) {
-            $response['status'] = 'error';
-            $response['message'] = $e->getMessage();
-        }
-    } else {
-        $response['status'] = 'no_file';
-        $response['post_data'] = $request->all();
-        $response['files'] = $request->files->all();
-    }
-    
-    return response()->json($response);
-});
+Route::get('/debug-upload', function () {
+    try {
+        // Test 1: Is the disk writable?
+        Storage::disk('public')->put('test.txt', 'ok');
+        $read = Storage::disk('public')->get('test.txt');
+        Storage::disk('public')->delete('test.txt');
 
-// Simple GET route to show a plain HTML form (no Blade)
-Route::get('/laravel-upload-test', function () {
-    $csrf = csrf_token();
-    return <<<HTML
-    <!DOCTYPE html>
-    <html>
-    <head><title>Upload Test</title></head>
-    <body>
-        <h2>Simple Laravel Upload Test</h2>
-        <form method="POST" enctype="multipart/form-data" action="/laravel-upload-test">
-            <input type="hidden" name="_token" value="$csrf">
-            <input type="file" name="photo" required>
-            <button type="submit">Upload</button>
-        </form>
-        <div id="result" style="margin-top:20px; padding:10px; border:1px solid #ccc;"></div>
-        <script>
-        document.querySelector('form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const form = e.target;
-            const formData = new FormData(form);
-            const res = await fetch(form.action, { method: 'POST', body: formData });
-            const data = await res.json();
-            document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
-        });
-        </script>
-    </body>
-    </html>
-    HTML;
+        // Test 2: Is the session alive?
+        $session = session()->getId();
+
+        // Test 3: Force Laravel to log what Livewire sees
+        Log::info('DEBUG: Storage OK, Session ID: ' . $session);
+
+        return response()->json([
+            'status' => '✅ SUCCESS',
+            'storage_writable' => true,
+            'session_id' => $session,
+            'last_laravel_log' => file_get_contents(storage_path('logs/laravel.log')) ?? 'No logs found',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => '❌ FAILED',
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
+    }
 });
