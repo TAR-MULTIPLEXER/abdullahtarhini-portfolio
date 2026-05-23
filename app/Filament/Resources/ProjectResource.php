@@ -118,16 +118,16 @@ class ProjectResource extends Resource
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
                         // ===== COVER IMAGE =====
-                      Forms\Components\FileUpload::make('cover_image')
+                   Forms\Components\FileUpload::make('cover_image')
     ->label('Cover Image')
     ->directory('projects/covers')
     ->visibility('public')
     ->required()
     ->columnSpanFull()
-    // ✅ NO ->image() method! This prevents Livewire AJAX validation.
+    // ✅ NO ->image()! NO ->acceptedFileTypes()!
+    // This forces it to be a plain HTML input.
     ->saveUploadedFileUsing(function ($file) {
         if (!$file) return null;
-        // Standard Laravel save
         return $file->store('projects/covers', 'public');
     })
     ->deleteUploadedFileUsing(function ($record, $state) {
@@ -140,12 +140,12 @@ class ProjectResource extends Resource
                         Forms\Components\Repeater::make('image_details')
                             ->label('Gallery Images with Descriptions')
                             ->schema([
-                              Forms\Components\FileUpload::make('image')
+                          Forms\Components\FileUpload::make('image')
     ->label('Image')
     ->directory('projects/gallery')
     ->visibility('public')
     ->required()
-    // ✅ NO ->image() method!
+    // ✅ NO ->image()!
     ->saveUploadedFileUsing(function ($file) {
         if (!$file) return null;
         return $file->store('projects/gallery', 'public');

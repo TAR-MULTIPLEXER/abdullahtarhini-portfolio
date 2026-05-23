@@ -35,12 +35,12 @@ return [
     | Temporary File Uploads
     |---------------------------------------------------------------------------
     */
-             'temporary_file_upload' => [
-        'disk' => null, // ✅ Set to null to disable Livewire's internal handling
-        'rules' => null,
-        'directory' => null,
-        'middleware' => null,
-        'preview_mimes' => [],
+           'temporary_file_upload' => [
+        'disk' => null,        // ✅ Disable Livewire's disk handling
+        'rules' => null,       // ✅ Disable Livewire's rules
+        'directory' => null,   // ✅ Disable Livewire's directory
+        'middleware' => null,  // ✅ Disable Livewire's middleware (stops 401)
+        'preview_mimes' => [], // ✅ Disable previews
         'max_upload_time' => 5,
         'cleanup' => false,
     ],
