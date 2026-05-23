@@ -117,28 +117,26 @@ class ProjectResource extends Resource
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
                         // ===== COVER IMAGE (DEFAULT FILAMENT CODE) =====
-                        Forms\Components\FileUpload::make('cover_image')
-                            ->label('Cover Image (for project card)')
-                            ->image()
-                            ->directory('projects/covers')
-                            ->visibility('public')
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('16:9')
-                            ->imageResizeTargetWidth('1200')
-                            ->imageResizeTargetHeight('675')
-                            ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)')
-                          
-                            ->columnSpanFull(),
+                   Forms\Components\FileUpload::make('cover_image')
+    ->label('Cover Image')
+    ->image()
+    ->directory('projects/covers')
+    ->disk('public') // ✅ Uses the 'public' disk we configured
+    ->visibility('public')
+    // ->required()
+    ->columnSpanFull(),
                         
                         // ===== Gallery Images with Descriptions =====
                         Forms\Components\Repeater::make('image_details')
                             ->label('Gallery Images with Descriptions')
                             ->schema([
-                                Forms\Components\FileUpload::make('image')
-                                    ->label('Image')
-                                    ->image()
-                                    ->directory('projects/gallery')
-                                    ->visibility('public'),
+                               Forms\Components\FileUpload::make('image')
+    ->label('Image')
+    ->image()
+    ->directory('projects/gallery')
+    ->disk('public')
+    ->visibility('public'),
+    // ->required(),
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
