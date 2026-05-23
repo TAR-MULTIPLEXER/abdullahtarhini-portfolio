@@ -33,7 +33,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# ✅ NUCLEAR PERMISSIONS FIX
+# ✅ CRITICAL: Create ALL necessary folders manually
 RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
     && mkdir -p /var/www/html/storage/app/public/projects/covers \
     && mkdir -p /var/www/html/storage/app/public/projects/gallery \
@@ -43,10 +43,13 @@ RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
     && mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
     && php artisan storage:link \
-    && chmod -R 777 /var/www/html/storage \
-    && chmod -R 777 /var/www/html/bootstrap/cache \
-    && chmod -R 777 /var/www/html/database \
-    && chown -R www-data:www-data /var/www/html
+    && chown -R www-data:www-data /var/www/html/storage \
+    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html/database \
+    && chown -R www-data:www-data /var/www/html/public \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/database
 
 EXPOSE 80
 
