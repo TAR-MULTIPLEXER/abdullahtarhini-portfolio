@@ -199,3 +199,12 @@ Route::get('/debug-db-config', function () {
         'ENV_DB_HOST' => env('DB_HOST'),
     ];
 });
+Route::get('/debug-error', function () {
+    try {
+        // Try to create a dummy project to see where it crashes
+        $test = \App\Models\Project::first();
+        return "✅ Model works. Found " . ($test ? 1 : 0) . " projects.";
+    } catch (\Exception $e) {
+        return "<pre style='background:#f4f4f4;padding:20px;white-space:pre-wrap;'>❌ Error: " . $e->getMessage() . "\nFile: " . $e->getFile() . "\nLine: " . $e->getLine() . "\n\nTrace:\n" . $e->getTraceAsString() . "</pre>";
+    }
+});

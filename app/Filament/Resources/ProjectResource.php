@@ -104,54 +104,75 @@ Forms\Components\Section::make('Gallery Images')
             ]);
     }
 
-    // ✅ HANDLE CREATE (Base64 is already in $data)
-protected static function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
+ protected static function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
 {
-    // Cover Image (already Base64 from frontend)
+    // Cover Image
     if (!empty($data['cover_image']) && str_starts_with($data['cover_image'], 'data:image')) {
         $data['cover_image_data'] = $data['cover_image'];
         unset($data['cover_image']);
+    } else {
+        unset($data['cover_image']);
     }
 
-    // Gallery Images (already Base64 from frontend)
+    // Gallery Images
     if (!empty($data['image_details']) && is_array($data['image_details'])) {
-        foreach ($data['image_details'] as &$img) {
+        $cleanGallery = [];
+        foreach ($data['image_details'] as $img) {
             if (!empty($img['image']) && str_starts_with($img['image'], 'data:image')) {
-                $img['image_data'] = $img['image'];
-                unset($img['image']);
+                $cleanGallery[] = [
+                    'image_data' => $img['image'],
+                    'description' => $img['description'] ?? null,
+                ];
+            } elseif (!empty($img['image_data'])) {
+                $cleanGallery[] = $img; // Keep existing base64 on edit
             }
         }
-        $data['image_details'] = json_encode(array_values($data['image_details']));
+        $data['image_details'] = json_encode($cleanGallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    } else {
+        $data['image_details'] = null;
     }
 
-    // PDFs (keep as normal paths)
+    // PDFs
     if (!empty($data['pdfs']) && is_array($data['pdfs'])) {
-        $data['pdfs'] = json_encode($data['pdfs']);
+        $data['pdfs'] = json_encode(array_values($data['pdfs']), JSON_UNESCAPED_SLASHES);
+    } else {
+        $data['pdfs'] = null;
     }
 
     return static::getModel()::create($data);
 }
 
-// ✅ HANDLE UPDATE (Same logic)
 protected static function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
 {
+    // Copy the exact same logic as create
     if (!empty($data['cover_image']) && str_starts_with($data['cover_image'], 'data:image')) {
         $data['cover_image_data'] = $data['cover_image'];
+        unset($data['cover_image']);
+    } else {
         unset($data['cover_image']);
     }
 
     if (!empty($data['image_details']) && is_array($data['image_details'])) {
-        foreach ($data['image_details'] as &$img) {
+        $cleanGallery = [];
+        foreach ($data['image_details'] as $img) {
             if (!empty($img['image']) && str_starts_with($img['image'], 'data:image')) {
-                $img['image_data'] = $img['image'];
-                unset($img['image']);
+                $cleanGallery[] = [
+                    'image_data' => $img['image'],
+                    'description' => $img['description'] ?? null,
+                ];
+            } elseif (!empty($img['image_data'])) {
+                $cleanGallery[] = $img;
             }
         }
-        $data['image_details'] = json_encode(array_values($data['image_details']));
+        $data['image_details'] = json_encode($cleanGallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    } else {
+        $data['image_details'] = null;
     }
 
     if (!empty($data['pdfs']) && is_array($data['pdfs'])) {
-        $data['pdfs'] = json_encode($data['pdfs']);
+        $data['pdfs'] = json_encode(array_values($data['pdfs']), JSON_UNESCAPED_SLASHES);
+    } else {
+        $data['pdfs'] = null;
     }
 
     $record->update($data);
