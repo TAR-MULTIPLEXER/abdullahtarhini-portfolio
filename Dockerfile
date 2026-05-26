@@ -35,10 +35,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
-# ✅ Create folders & fix permissions
-RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
-    && mkdir -p /var/www/html/storage/framework/livewire-tmp \
+RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views,testing} \
+    && mkdir -p /var/www/html/storage/logs \
+    && mkdir -p /var/www/html/storage/app/public \
+    && mkdir -p /var/www/html/storage/app/private/temp \
     && mkdir -p /var/www/html/bootstrap/cache \
+    && mkdir -p /var/www/html/public/storage \
     && chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage \
