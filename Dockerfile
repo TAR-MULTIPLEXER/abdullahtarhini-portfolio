@@ -46,5 +46,4 @@ RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
 
 EXPOSE 80
 
-# ✅ SINGLE CMD: Clear caches + run migrations + start Apache
-CMD ["sh", "-c", "php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan migrate --force && apache2-foreground"]
+CMD ["sh", "-c", "php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan route:clear && php artisan migrate --force && apache2-foreground"]
