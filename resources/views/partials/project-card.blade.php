@@ -3,18 +3,31 @@
      data-status="{{ $project->status }}">
     
     <!-- Clickable Cover Image -->
-    <a href="{{ route('project.show', $project->slug) }}" class="block">
-        <div class="relative h-48 overflow-hidden">
-            @if(!empty($project->cover_image))
-                <img src="{{ storage::url($project->cover_image) }}" 
-                     alt="{{ $project->title }}" 
-                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
-            @elseif(!empty($project->image_details) && !empty($project->image_details[0]['image']))
-                <img src="{{ storage::url($project->image_details[0]['image']) }}" 
-                     alt="{{ $project->title }}" 
-                     class="w-full h-full object-cover">
-            @elseif(!empty($project->images) && count($project->images) > 0)
-                <img src="{{ storage::url($project->images[0]) }}" 
+  <a href="{{ route('project.show', $project->slug) }}" class="block">
+    <div class="relative h-48 overflow-hidden bg-gray-100">
+        
+        {{-- 1. Check for Base64 Cover Image (New Method) --}}
+        @if(!empty($project->cover_image_data))
+            <img src="data:image/jpeg;base64,{{ $project->cover_image_data }}" 
+                 alt="{{ $project->title }}" 
+                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+        
+        {{-- 2. Fallback: Check for Old Path-Based Cover Image --}}
+        @elseif(!empty($project->cover_image))
+            <img src="{{ asset('storage/' . $project->cover_image) }}" 
+                 alt="{{ $project->title }}" 
+                 class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+        
+        {{-- 3. Fallback: Check First Gallery Image (Base64) --}}
+        @elseif(!empty($project->image_details))
+            @php
+                // Decode JSON if it's a string, otherwise use array
+                $details = is_string($project->image_details) ? json_decode($project->image_details, true) : $project->image_details;
+                $firstImage = $details[0]['image_data'] ?? null;
+            @endphp
+            
+            @if($firstImage)
+                <img src="data:image/jpeg;base64,{{ $firstImage }}" 
                      alt="{{ $project->title }}" 
                      class="w-full h-full object-cover">
             @else
@@ -22,13 +35,20 @@
                     <i class="fas fa-project-diagram text-6xl text-white/50"></i>
                 </div>
             @endif
-            
-            <span style="background-color: goldenrod; border-top-left-radius: 10px; border-bottom-left-radius: 10px; padding: 4px 8px; margin: 0;" class="absolute top-4 left-1 px-3 py-1 text-xs font-bold rounded-full text-white {{ $project->getTypeBadgeColor() }}">
-                {{ ucfirst($project->type) }}
-            </span> 
-         
-        </div>
-    </a>
+
+        {{-- 4. Final Fallback: Placeholder --}}
+        @else
+            <div class="w-full h-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+                <i class="fas fa-project-diagram text-6xl text-white/50"></i>
+            </div>
+        @endif
+        
+        <span style="background-color: goldenrod; border-top-left-radius: 10px; border-bottom-left-radius: 10px; padding: 4px 8px; margin: 0;" class="absolute top-4 left-1 px-3 py-1 text-xs font-bold rounded-full text-white {{ $project->getTypeBadgeColor() }}">
+            {{ ucfirst($project->type) }}
+        </span> 
+     
+    </div>
+</a>
     
     <div style="padding: 4px 8px;">
                @if($project->status == 'academic')

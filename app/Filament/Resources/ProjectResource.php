@@ -10,7 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 
 class ProjectResource extends Resource
 {
@@ -82,10 +82,10 @@ class ProjectResource extends Resource
                         Forms\Components\Textarea::make('gallery_description')
                             ->label('Image Gallery Description')
                             ->rows(2)
-                            ->helperText('Optional description for the image gallery (e.g., "Screenshots from the POS system")'),
+                            ->helperText('Optional description for the image gallery'),
                     ]),
 
-                // ===== PROJECT PDFs =====
+                // ===== PROJECT PDFs (Stored in Public Storage for now) =====
                 Forms\Components\Section::make('Project Documents (PDFs)')
                     ->schema([
                         Forms\Components\Repeater::make('pdfs')
@@ -94,7 +94,7 @@ class ProjectResource extends Resource
                                 Forms\Components\TextInput::make('title')
                                     ->label('Document Title')
                                     ->required()
-                                    ->placeholder('e.g., User Manual, Technical Specs, Installation Guide')
+                                    ->placeholder('e.g., User Manual')
                                     ->maxLength(255)
                                     ->columnSpan(1),
                                 
@@ -109,36 +109,36 @@ class ProjectResource extends Resource
                             ])
                             ->columns(2)
                             ->collapsible()
-                            ->itemLabel(fn (array $state): string => $state['title'] ?? 'New PDF Document')
+                            ->itemLabel(fn (array $state): string => $state['title'] ?? 'New PDF')
                             ->maxItems(10)
                             ->minItems(0)
                             ->columnSpanFull(),
                     ]),
 
-                // ===== IMAGES & MEDIA =====
+                // ===== IMAGES & MEDIA (Base64 Storage) =====
                 Forms\Components\Section::make('Images & Media')
                     ->schema([
-                        // ===== COVER IMAGE - PLAIN HTML INPUT =====
+                        // ===== COVER IMAGE (Base64) =====
                         Forms\Components\Field::make('cover_image')
                             ->label('Cover Image (for project card)')
                             ->view('filament.forms.components.plain-file-upload')
-                            
+                            ->required()
                             ->columnSpanFull()
-                            ->helperText('This image appears on the project card. Recommended: 1200x675px (16:9)'),
+                            ->helperText('Recommended: 1200x675px (16:9). Stored in Database.'),
                         
-                        // ===== Gallery Images with Descriptions - PLAIN HTML INPUT =====
+                        // ===== Gallery Images (Base64) =====
                         Forms\Components\Repeater::make('image_details')
                             ->label('Gallery Images with Descriptions')
                             ->schema([
                                 Forms\Components\Field::make('image')
                                     ->label('Image')
-                                    ->view('filament.forms.components.plain-file-upload'),
-                                    
+                                    ->view('filament.forms.components.plain-file-upload')
+                                    ->required(),
                                 
                                 Forms\Components\Textarea::make('description')
                                     ->label('Image Description')
                                     ->rows(2)
-                                    ->placeholder('Describe this screenshot/image...'),
+                                    ->placeholder('Describe this screenshot...'),
                             ])
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['description'] ?? null)
@@ -163,16 +163,16 @@ class ProjectResource extends Resource
                         Forms\Components\TextInput::make('live_link')
                             ->label('Live Demo Link')
                             ->url()
-                            ->helperText('Leave EMPTY for local/offline projects (POS, Desktop apps)'),
+                            ->helperText('Leave EMPTY for local/offline projects'),
                         
                         Forms\Components\TextInput::make('documentation_link')
                             ->label('Documentation Link')
                             ->url()
-                            ->placeholder('https://drive.google.com/... or GitHub Wiki'),
+                            ->placeholder('https://drive.google.com/...'),
                         
                         Forms\Components\TextInput::make('tools_used')
                             ->label('Technologies/Tools')
-                            ->placeholder('PHP, MySQL, Laravel, Arduino, MATLAB')
+                            ->placeholder('PHP, MySQL, Laravel, Arduino')
                             ->helperText('Separate with commas'),
                     ])->columns(2),
 
@@ -183,7 +183,7 @@ class ProjectResource extends Resource
                             ->label('Project Specifications')
                             ->keyLabel('Specification')
                             ->valueLabel('Value')
-                            ->helperText('e.g., Voltage: 5V, Protocol: MQTT, Database: MySQL') 
+                            ->helperText('e.g., Voltage: 5V, Protocol: MQTT') 
                             ->columnSpanFull(),
                     ]),
 
@@ -197,60 +197,41 @@ class ProjectResource extends Resource
                         Forms\Components\TextInput::make('sort_order')
                             ->numeric()
                             ->default(0)
-                            ->helperText('Lower numbers appear first (0 = highest priority)'),
+                            ->helperText('Lower numbers appear first'),
                         
                         Forms\Components\Toggle::make('show_gallery_description')
                             ->label('Show Gallery Description')
-                            ->default(true)
-                            ->helperText('Display the gallery description on project detail page'),
+                            ->default(true),
                     ])->columns(3),
             ]);
     }
 
-    // ✅ HANDLE FILE UPLOAD ON CREATE (RAW PHP)
+    // ✅ HANDLE FILE UPLOAD ON CREATE (BASE64 STORAGE)
     protected static function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
     {
-        // Handle cover image upload
-        if (isset($data['cover_image']) && $data['cover_image'] instanceof \Illuminate\Http\UploadedFile) {
-            $file = $data['cover_image'];
-            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('storage/projects/covers');
-            
-            // Ensure directory exists
-            if (!is_dir($destinationPath)) {
-                mkdir($destinationPath, 0775, true);
-            }
-            
-            // Move file using raw PHP (same as test-upload.php)
-            if ($file->move($destinationPath, $filename)) {
-                $data['cover_image'] = 'projects/covers/' . $filename;
-            }
+        // 1. Handle Cover Image -> Convert to Base64
+        if (isset($data['cover_image']) && $data['cover_image'] instanceof UploadedFile) {
+            $imageData = file_get_contents($data['cover_image']->getRealPath());
+            $data['cover_image_data'] = base64_encode($imageData);
+            $data['cover_image'] = null; // Clear path field
         }
-        
-        // Handle gallery images upload
+
+        // 2. Handle Gallery Images -> Convert to Base64
         if (isset($data['image_details']) && is_array($data['image_details'])) {
             foreach ($data['image_details'] as &$imageDetail) {
-                if (isset($imageDetail['image']) && $imageDetail['image'] instanceof \Illuminate\Http\UploadedFile) {
-                    $file = $imageDetail['image'];
-                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                    $destinationPath = public_path('storage/projects/gallery');
-                    
-                    if (!is_dir($destinationPath)) {
-                        mkdir($destinationPath, 0775, true);
-                    }
-                    
-                    if ($file->move($destinationPath, $filename)) {
-                        $imageDetail['image'] = 'projects/gallery/' . $filename;
-                    }
+                if (isset($imageDetail['image']) && $imageDetail['image'] instanceof UploadedFile) {
+                    $imageData = file_get_contents($imageDetail['image']->getRealPath());
+                    $imageDetail['image_data'] = base64_encode($imageData);
+                    unset($imageDetail['image']); // Remove file object
                 }
             }
             $data['image_details'] = json_encode($data['image_details']);
         }
-        
-        // Handle PDFs upload
+
+        // 3. Handle PDFs (Standard Storage)
         if (isset($data['pdfs']) && is_array($data['pdfs'])) {
             foreach ($data['pdfs'] as &$pdf) {
-                if (isset($pdf['path']) && $pdf['path'] instanceof \Illuminate\Http\UploadedFile) {
+                if (isset($pdf['path']) && $pdf['path'] instanceof UploadedFile) {
                     $file = $pdf['path'];
                     $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
                     $destinationPath = public_path('storage/projects/pdfs');
@@ -270,64 +251,32 @@ class ProjectResource extends Resource
         return static::getModel()::create($data);
     }
 
-    // ✅ HANDLE FILE UPLOAD ON UPDATE (RAW PHP)
+    // ✅ HANDLE FILE UPLOAD ON UPDATE (BASE64 STORAGE)
     protected static function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
     {
-        // Handle cover image upload
-        if (isset($data['cover_image']) && $data['cover_image'] instanceof \Illuminate\Http\UploadedFile) {
-            // Delete old image if exists
-            if ($record->cover_image) {
-                $oldPath = public_path('storage/' . $record->cover_image);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
-                }
-            }
-            
-            $file = $data['cover_image'];
-            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('storage/projects/covers');
-            
-            if (!is_dir($destinationPath)) {
-                mkdir($destinationPath, 0775, true);
-            }
-            
-            if ($file->move($destinationPath, $filename)) {
-                $data['cover_image'] = 'projects/covers/' . $filename;
-            }
+        // 1. Handle Cover Image Update
+        if (isset($data['cover_image']) && $data['cover_image'] instanceof UploadedFile) {
+            $imageData = file_get_contents($data['cover_image']->getRealPath());
+            $data['cover_image_data'] = base64_encode($imageData);
+            $data['cover_image'] = null;
         }
-        
-        // Handle gallery images upload
+
+        // 2. Handle Gallery Images Update
         if (isset($data['image_details']) && is_array($data['image_details'])) {
             foreach ($data['image_details'] as &$imageDetail) {
-                if (isset($imageDetail['image']) && $imageDetail['image'] instanceof \Illuminate\Http\UploadedFile) {
-                    // Delete old image if exists
-                    if (isset($imageDetail['image']) && is_string($imageDetail['image'])) {
-                        $oldPath = public_path('storage/' . $imageDetail['image']);
-                        if (file_exists($oldPath)) {
-                            unlink($oldPath);
-                        }
-                    }
-                    
-                    $file = $imageDetail['image'];
-                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                    $destinationPath = public_path('storage/projects/gallery');
-                    
-                    if (!is_dir($destinationPath)) {
-                        mkdir($destinationPath, 0775, true);
-                    }
-                    
-                    if ($file->move($destinationPath, $filename)) {
-                        $imageDetail['image'] = 'projects/gallery/' . $filename;
-                    }
+                if (isset($imageDetail['image']) && $imageDetail['image'] instanceof UploadedFile) {
+                    $imageData = file_get_contents($imageDetail['image']->getRealPath());
+                    $imageDetail['image_data'] = base64_encode($imageData);
+                    unset($imageDetail['image']);
                 }
             }
             $data['image_details'] = json_encode($data['image_details']);
         }
-        
-        // Handle PDFs upload
+
+        // 3. Handle PDFs Update
         if (isset($data['pdfs']) && is_array($data['pdfs'])) {
             foreach ($data['pdfs'] as &$pdf) {
-                if (isset($pdf['path']) && $pdf['path'] instanceof \Illuminate\Http\UploadedFile) {
+                if (isset($pdf['path']) && $pdf['path'] instanceof UploadedFile) {
                     // Delete old PDF if exists
                     if (isset($pdf['path']) && is_string($pdf['path'])) {
                         $oldPath = public_path('storage/' . $pdf['path']);
