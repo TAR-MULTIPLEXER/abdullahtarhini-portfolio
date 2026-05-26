@@ -37,6 +37,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progre
 
 # ✅ Create folders & fix permissions
 RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views} \
+    && mkdir -p /var/www/html/storage/framework/livewire-tmp \
     && mkdir -p /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/bootstrap/cache \
