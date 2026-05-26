@@ -10,7 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectResource extends Resource
 {
@@ -24,19 +24,12 @@ class ProjectResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Basic Information')
                     ->schema([
-                        Forms\Components\TextInput::make('title')
-                            ->required()->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                        Forms\Components\TextInput::make('slug')
-                            ->required()->maxLength(255)->unique(ignoreRecord: true),
+                        Forms\Components\TextInput::make('title')->required()->maxLength(255)
+                            ->live(onBlur: true)->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                        Forms\Components\TextInput::make('slug')->required()->maxLength(255)->unique(ignoreRecord: true),
                         Forms\Components\Select::make('type')
-                            ->options([
-                                'web' => 'Web Application',
-                                'hardware' => 'Hardware Project',
-                                'desktop' => 'Desktop/POS System',
-                                'telecom' => 'Telecommunication',
-                            ])->required()->default('web')->live(),
+                            ->options(['web' => 'Web Application', 'hardware' => 'Hardware Project', 'desktop' => 'Desktop/POS System', 'telecom' => 'Telecommunication'])
+                            ->required()->default('web')->live(),
                         Forms\Components\TextInput::make('category')->required()->maxLength(255),
                         Forms\Components\Select::make('status')
                             ->options(['completed' => 'Completed', 'ongoing' => 'Ongoing', 'academic' => 'University Project'])
@@ -50,21 +43,22 @@ class ProjectResource extends Resource
                         Forms\Components\Textarea::make('gallery_description')->label('Gallery Description')->rows(2),
                     ]),
 
-                // ✅ FIXED: Use standard FileUpload component
+                // ✅ COVER IMAGE (Standard Filament Upload)
                 Forms\Components\Section::make('Cover Image')
                     ->schema([
                         Forms\Components\FileUpload::make('cover_image')
                             ->label('Cover Image')
-                            ->disk('local') // Temporary upload
+                            ->disk('local')
                             ->directory('temp')
                             ->visibility('private')
                             ->required()
                             ->image()
-                            ->maxSize(5120) // 5MB
+                            ->maxSize(5120)
                             ->columnSpanFull()
-                            ->helperText('Stored securely as Base64 in the database.'),
+                            ->helperText('Stored as Base64 in the database.'),
                     ]),
 
+                // ✅ GALLERY IMAGES
                 Forms\Components\Section::make('Gallery Images')
                     ->schema([
                         Forms\Components\Repeater::make('image_details')
@@ -86,6 +80,7 @@ class ProjectResource extends Resource
                             ->columnSpanFull(),
                     ]),
 
+                // ✅ PDF DOCUMENTS
                 Forms\Components\Section::make('PDF Documents')
                     ->schema([
                         Forms\Components\Repeater::make('pdfs')
@@ -117,57 +112,69 @@ class ProjectResource extends Resource
             ]);
     }
 
-    // ✅ FIXED: Handle Upload & Convert to Base64 on CREATE
+    // ✅ HANDLE CREATE (Reads from temp storage, converts to Base64)
     protected static function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
     {
         // Cover Image
-        if (isset($data['cover_image']) && $data['cover_image'] instanceof UploadedFile) {
-            $data['cover_image_data'] = base64_encode(file_get_contents($data['cover_image']->getRealPath()));
-            @unlink($data['cover_image']->getRealPath()); // Clean temp file
+        if (!empty($data['cover_image'])) {
+            $tempPath = $data['cover_image'];
+            if (Storage::disk('local')->exists($tempPath)) {
+                $data['cover_image_data'] = base64_encode(Storage::disk('local')->get($tempPath));
+                Storage::disk('local')->delete($tempPath); // Clean up
+            }
             unset($data['cover_image']);
         }
 
         // Gallery Images
-        if (isset($data['image_details']) && is_array($data['image_details'])) {
-            foreach ($data['image_details'] as &$img) {
-                if (isset($img['image']) && $img['image'] instanceof UploadedFile) {
-                    $img['image_data'] = base64_encode(file_get_contents($img['image']->getRealPath()));
-                    @unlink($img['image']->getRealPath());
-                    unset($img['image']);
+        if (!empty($data['image_details']) && is_array($data['image_details'])) {
+            foreach ($data['image_details'] as $index => $img) {
+                if (!empty($img['image'])) {
+                    $tempPath = $img['image'];
+                    if (Storage::disk('local')->exists($tempPath)) {
+                        $data['image_details'][$index]['image_data'] = base64_encode(Storage::disk('local')->get($tempPath));
+                        Storage::disk('local')->delete($tempPath);
+                        unset($data['image_details'][$index]['image']);
+                    }
                 }
             }
             $data['image_details'] = json_encode(array_values($data['image_details']));
         }
 
-        // PDFs (keep as normal paths)
-        if (isset($data['pdfs']) && is_array($data['pdfs'])) {
+        // PDFs
+        if (!empty($data['pdfs']) && is_array($data['pdfs'])) {
             $data['pdfs'] = json_encode($data['pdfs']);
         }
 
         return static::getModel()::create($data);
     }
 
-    // ✅ FIXED: Handle Upload & Convert to Base64 on UPDATE
+    // ✅ HANDLE UPDATE
     protected static function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
     {
-        if (isset($data['cover_image']) && $data['cover_image'] instanceof UploadedFile) {
-            $data['cover_image_data'] = base64_encode(file_get_contents($data['cover_image']->getRealPath()));
-            @unlink($data['cover_image']->getRealPath());
+        if (!empty($data['cover_image'])) {
+            $tempPath = $data['cover_image'];
+            if (Storage::disk('local')->exists($tempPath)) {
+                $data['cover_image_data'] = base64_encode(Storage::disk('local')->get($tempPath));
+                Storage::disk('local')->delete($tempPath);
+            }
             unset($data['cover_image']);
         }
 
-        if (isset($data['image_details']) && is_array($data['image_details'])) {
-            foreach ($data['image_details'] as &$img) {
-                if (isset($img['image']) && $img['image'] instanceof UploadedFile) {
-                    $img['image_data'] = base64_encode(file_get_contents($img['image']->getRealPath()));
-                    @unlink($img['image']->getRealPath());
-                    unset($img['image']);
+        if (!empty($data['image_details']) && is_array($data['image_details'])) {
+            foreach ($data['image_details'] as $index => $img) {
+                if (!empty($img['image'])) {
+                    $tempPath = $img['image'];
+                    if (Storage::disk('local')->exists($tempPath)) {
+                        $data['image_details'][$index]['image_data'] = base64_encode(Storage::disk('local')->get($tempPath));
+                        Storage::disk('local')->delete($tempPath);
+                        unset($data['image_details'][$index]['image']);
+                    }
                 }
             }
             $data['image_details'] = json_encode(array_values($data['image_details']));
         }
 
-        if (isset($data['pdfs']) && is_array($data['pdfs'])) {
+        if (!empty($data['pdfs']) && is_array($data['pdfs'])) {
             $data['pdfs'] = json_encode($data['pdfs']);
         }
 
