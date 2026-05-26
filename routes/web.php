@@ -7,8 +7,28 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-
-// ===== YOUR CORE ROUTES =====
+Route::get('/fix-sessions', function () {
+    try {
+        // Create sessions table if it doesn't exist
+        \Illuminate\Support\Facades\Schema::create('sessions', function ($table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+        
+        // Clear caches
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        
+        return '✅ Sessions table created + caches cleared! <a href="/admin/login">Try Login</a>';
+    } catch (\Exception $e) {
+        return '❌ Error: ' . $e->getMessage();
+    }
+});
 
 // Home Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -171,4 +191,11 @@ Route::get('/run-migrations', function () {
     } catch (\Exception $e) {
         return "<h1>❌ Migration Error</h1><pre>" . $e->getMessage() . "</pre>";
     }
+});
+Route::get('/debug-db-config', function () {
+    return [
+        'ENV_DB_CONNECTION' => env('DB_CONNECTION'),
+        'CONFIG_DEFAULT' => config('database.default'),
+        'ENV_DB_HOST' => env('DB_HOST'),
+    ];
 });
