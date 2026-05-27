@@ -49,4 +49,4 @@ RUN mkdir -p /var/www/html/storage/framework/{cache,sessions,views,testing} \
 
 EXPOSE 80
 
-CMD ["sh", "-c", "php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan route:clear && php artisan migrate --force && apache2-foreground"]
+CMD ["sh", "-c", "php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan migrate --force && apache2-foreground"]
