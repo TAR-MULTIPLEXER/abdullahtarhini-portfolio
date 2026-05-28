@@ -49,7 +49,7 @@ Forms\Components\Section::make('Cover Image')
     ->schema([
         \App\Filament\Forms\Components\Base64ImageUpload::make('cover_image')
             ->label('Cover Image')
-            ->required()
+           
             ->columnSpanFull()
             ->helperText('Stored as Base64 in the database.'),
     ]),
