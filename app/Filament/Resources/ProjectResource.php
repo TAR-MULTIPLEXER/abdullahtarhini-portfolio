@@ -63,7 +63,7 @@ Forms\Components\Section::make('Gallery Images')
             ->schema([
                 \App\Filament\Forms\Components\Base64ImageUpload::make('image')
                     ->label('Image')
-                    ->required(),
+                    ,
                 Forms\Components\Textarea::make('description')->label('Description')->rows(2),
             ])
             ->collapsible()
