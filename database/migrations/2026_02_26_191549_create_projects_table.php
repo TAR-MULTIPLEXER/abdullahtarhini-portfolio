@@ -41,6 +41,9 @@ return new class extends Migration
             // Metadata
             $table->boolean('is_featured')->default(false);
             $table->integer('sort_order')->default(0);
+             $table->text('cover_image')->nullable()->change();
+    $table->text('image_details')->nullable()->change();
+    $table->text('pdfs')->nullable()->change();
             $table->timestamps();
         });
     }
