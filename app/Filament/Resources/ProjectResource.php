@@ -43,34 +43,30 @@ class ProjectResource extends Resource
                         Forms\Components\Textarea::make('gallery_description')->label('Gallery Description')->rows(2),
                     ]),
 
-                // ✅ COVER IMAGE (Standard Filament Upload)
-               // ✅ COVER IMAGE (Using Custom Base64 Upload Component)
-Forms\Components\Section::make('Cover Image')
-    ->schema([
-        \App\Filament\Forms\Components\Base64ImageUpload::make('cover_image')
-            ->label('Cover Image')
-           
-            ->columnSpanFull()
-            ->helperText('Stored as Base64 in the database.'),
-    ]),
+                // ✅ COVER IMAGE
+                Forms\Components\Section::make('Cover Image')
+                    ->schema([
+                        \App\Filament\Forms\Components\Base64ImageUpload::make('cover_image')
+                            ->label('Cover Image')
+                            ->columnSpanFull()
+                            ->helperText('Stored as Base64 in the database.'),
+                    ]),
 
                 // ✅ GALLERY IMAGES
-             // ✅ GALLERY IMAGES (Using Custom Base64 Upload Component)
-Forms\Components\Section::make('Gallery Images')
-    ->schema([
-        Forms\Components\Repeater::make('image_details')
-            ->label('Gallery Images')
-            ->schema([
-                \App\Filament\Forms\Components\Base64ImageUpload::make('image')
-                    ->label('Image')
-                    ,
-                Forms\Components\Textarea::make('description')->label('Description')->rows(2),
-            ])
-            ->collapsible()
-            ->itemLabel(fn (array $state): ?string => $state['description'] ?? null)
-            ->maxItems(30)
-            ->columnSpanFull(),
-    ]),
+                Forms\Components\Section::make('Gallery Images')
+                    ->schema([
+                        Forms\Components\Repeater::make('image_details')
+                            ->label('Gallery Images')
+                            ->schema([
+                                \App\Filament\Forms\Components\Base64ImageUpload::make('image')
+                                    ->label('Image'),
+                                Forms\Components\Textarea::make('description')->label('Description')->rows(2),
+                            ])
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): ?string => $state['description'] ?? null)
+                            ->maxItems(30)
+                            ->columnSpanFull(),
+                    ]),
 
                 // ✅ PDF DOCUMENTS
                 Forms\Components\Section::make('PDF Documents')
@@ -104,80 +100,88 @@ Forms\Components\Section::make('Gallery Images')
             ]);
     }
 
- protected static function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
-{
-    // Cover Image
-    if (!empty($data['cover_image']) && str_starts_with($data['cover_image'], 'data:image')) {
-        $data['cover_image_data'] = $data['cover_image'];
-        unset($data['cover_image']);
-    } else {
-        unset($data['cover_image']);
-    }
-
-    // Gallery Images
-    if (!empty($data['image_details']) && is_array($data['image_details'])) {
-        $cleanGallery = [];
-        foreach ($data['image_details'] as $img) {
-            if (!empty($img['image']) && str_starts_with($img['image'], 'data:image')) {
-                $cleanGallery[] = [
-                    'image_data' => $img['image'],
-                    'description' => $img['description'] ?? null,
-                ];
-            } elseif (!empty($img['image_data'])) {
-                $cleanGallery[] = $img; // Keep existing base64 on edit
+    protected static function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
+    {
+        // Cover Image Validation and Processing
+        if (!empty($data['cover_image'])) {
+            if (!str_starts_with($data['cover_image'], 'data:image')) {
+                throw new \Exception("Invalid cover image format. Must be Base64.");
             }
+            $data['cover_image_data'] = $data['cover_image'];
+            unset($data['cover_image']);
+        } else {
+            unset($data['cover_image']);
         }
-        $data['image_details'] = json_encode($cleanGallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    } else {
-        $data['image_details'] = null;
-    }
 
-    // PDFs
-    if (!empty($data['pdfs']) && is_array($data['pdfs'])) {
-        $data['pdfs'] = json_encode(array_values($data['pdfs']), JSON_UNESCAPED_SLASHES);
-    } else {
-        $data['pdfs'] = null;
-    }
-
-    return static::getModel()::create($data);
-}
-
-protected static function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
-{
-    // Copy the exact same logic as create
-    if (!empty($data['cover_image']) && str_starts_with($data['cover_image'], 'data:image')) {
-        $data['cover_image_data'] = $data['cover_image'];
-        unset($data['cover_image']);
-    } else {
-        unset($data['cover_image']);
-    }
-
-    if (!empty($data['image_details']) && is_array($data['image_details'])) {
-        $cleanGallery = [];
-        foreach ($data['image_details'] as $img) {
-            if (!empty($img['image']) && str_starts_with($img['image'], 'data:image')) {
-                $cleanGallery[] = [
-                    'image_data' => $img['image'],
-                    'description' => $img['description'] ?? null,
-                ];
-            } elseif (!empty($img['image_data'])) {
-                $cleanGallery[] = $img;
+        // Gallery Images Processing
+        if (!empty($data['image_details']) && is_array($data['image_details'])) {
+            $cleanGallery = [];
+            foreach ($data['image_details'] as $img) {
+                if (!empty($img['image']) && str_starts_with($img['image'], 'data:image')) {
+                    $cleanGallery[] = [
+                        'image_data' => $img['image'],
+                        'description' => $img['description'] ?? null,
+                    ];
+                } elseif (!empty($img['image_data'])) {
+                    $cleanGallery[] = $img; // Keep existing base64 on edit
+                }
             }
+            $data['image_details'] = json_encode($cleanGallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } else {
+            $data['image_details'] = null;
         }
-        $data['image_details'] = json_encode($cleanGallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    } else {
-        $data['image_details'] = null;
+
+        // PDFs Processing
+        if (!empty($data['pdfs']) && is_array($data['pdfs'])) {
+            $data['pdfs'] = json_encode(array_values($data['pdfs']), JSON_UNESCAPED_SLASHES);
+        } else {
+            $data['pdfs'] = null;
+        }
+
+        return static::getModel()::create($data);
     }
 
-    if (!empty($data['pdfs']) && is_array($data['pdfs'])) {
-        $data['pdfs'] = json_encode(array_values($data['pdfs']), JSON_UNESCAPED_SLASHES);
-    } else {
-        $data['pdfs'] = null;
-    }
+    protected static function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
+    {
+        // Cover Image Validation and Processing
+        if (!empty($data['cover_image'])) {
+            if (!str_starts_with($data['cover_image'], 'data:image')) {
+                throw new \Exception("Invalid cover image format. Must be Base64.");
+            }
+            $data['cover_image_data'] = $data['cover_image'];
+            unset($data['cover_image']);
+        } else {
+            unset($data['cover_image']);
+        }
 
-    $record->update($data);
-    return $record;
-}
+        // Gallery Images Processing
+        if (!empty($data['image_details']) && is_array($data['image_details'])) {
+            $cleanGallery = [];
+            foreach ($data['image_details'] as $img) {
+                if (!empty($img['image']) && str_starts_with($img['image'], 'data:image')) {
+                    $cleanGallery[] = [
+                        'image_data' => $img['image'],
+                        'description' => $img['description'] ?? null,
+                    ];
+                } elseif (!empty($img['image_data'])) {
+                    $cleanGallery[] = $img;
+                }
+            }
+            $data['image_details'] = json_encode($cleanGallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } else {
+            $data['image_details'] = null;
+        }
+
+        // PDFs Processing
+        if (!empty($data['pdfs']) && is_array($data['pdfs'])) {
+            $data['pdfs'] = json_encode(array_values($data['pdfs']), JSON_UNESCAPED_SLASHES);
+        } else {
+            $data['pdfs'] = null;
+        }
+
+        $record->update($data);
+        return $record;
+    }
 
     public static function table(Table $table): Table
     {
