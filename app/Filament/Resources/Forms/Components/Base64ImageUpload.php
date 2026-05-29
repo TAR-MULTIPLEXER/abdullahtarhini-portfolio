@@ -19,12 +19,16 @@ class Base64ImageUpload extends Field
             }
         });
 
-        // ✅ FIXED: Use a simple rule array instead of a closure to avoid $attribute issues
-        $this->rule('required');
-        $this->rule(function ($state, \Closure $fail) {
-            if ($state && !str_starts_with($state, 'data:image')) {
-                $fail('The image must be a valid base64 image.');
-            }
-        });
+        // ✅ FIX: Use ->required() and custom validation via ->afterStateUpdated() or ->rules()
+        $this->required();
+        
+        // Use ->rules() with a string or array instead of ->rule() with a closure
+        $this->rules([
+            function (string $attribute, mixed $value, \Closure $fail) {
+                if ($value && !str_starts_with($value, 'data:image')) {
+                    $fail('The image must be a valid base64 image.');
+                }
+            },
+        ]);
     }
 }
