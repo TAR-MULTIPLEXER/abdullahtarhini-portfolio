@@ -10,7 +10,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class ProjectResource extends Resource
 {
@@ -24,23 +23,58 @@ class ProjectResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Basic Information')
                     ->schema([
-                        Forms\Components\TextInput::make('title')->required()->maxLength(255)
-                            ->live(onBlur: true)->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))),
-                        Forms\Components\TextInput::make('slug')->required()->maxLength(255)->unique(ignoreRecord: true),
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                        
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true),
+                        
                         Forms\Components\Select::make('type')
-                            ->options(['web' => 'Web Application', 'hardware' => 'Hardware Project', 'desktop' => 'Desktop/POS System', 'telecom' => 'Telecommunication'])
-                            ->required()->default('web')->live(),
-                        Forms\Components\TextInput::make('category')->required()->maxLength(255),
+                            ->options([
+                                'web' => 'Web Application',
+                                'hardware' => 'Hardware Project',
+                                'desktop' => 'Desktop/POS System',
+                                'telecom' => 'Telecommunication'
+                            ])
+                            ->required()
+                            ->default('web')
+                            ->live(),
+                        
+                        Forms\Components\TextInput::make('category')
+                            ->required()
+                            ->maxLength(255),
+                        
                         Forms\Components\Select::make('status')
-                            ->options(['completed' => 'Completed', 'ongoing' => 'Ongoing', 'academic' => 'University Project'])
-                            ->required()->default('completed'),
+                            ->options([
+                                'completed' => 'Completed',
+                                'ongoing' => 'Ongoing',
+                                'academic' => 'University Project'
+                            ])
+                            ->required()
+                            ->default('completed'),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Descriptions')
                     ->schema([
-                        Forms\Components\Textarea::make('short_description')->required()->rows(3)->maxLength(500),
-                        Forms\Components\RichEditor::make('full_description')->required()->columnSpanFull(),
-                        Forms\Components\Textarea::make('gallery_description')->label('Gallery Description')->rows(2),
+                        Forms\Components\Textarea::make('short_description')
+                            ->required()
+                            ->rows(3)
+                            ->maxLength(500),
+                        
+                        Forms\Components\RichEditor::make('full_description')
+                            ->required()
+                            ->columnSpanFull(),
+                        
+                        // FIXED: Added ->nullable() so it accepts empty values
+                        Forms\Components\Textarea::make('gallery_description')
+                            ->label('Gallery Description')
+                            ->rows(2)
+                            ->nullable(), 
                     ]),
 
                 // ✅ COVER IMAGE
@@ -60,7 +94,10 @@ class ProjectResource extends Resource
                             ->schema([
                                 \App\Filament\Forms\Components\Base64ImageUpload::make('image')
                                     ->label('Image'),
-                                Forms\Components\Textarea::make('description')->label('Description')->rows(2),
+                                
+                                Forms\Components\Textarea::make('description')
+                                    ->label('Description')
+                                    ->rows(2),
                             ])
                             ->collapsible()
                             ->itemLabel(fn (array $state): ?string => $state['description'] ?? null)
@@ -74,7 +111,12 @@ class ProjectResource extends Resource
                         Forms\Components\Repeater::make('pdfs')
                             ->label('PDFs')
                             ->schema([
-                                Forms\Components\TextInput::make('title')->label('Title')->required()->maxLength(255)->columnSpan(1),
+                                Forms\Components\TextInput::make('title')
+                                    ->label('Title')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpan(1),
+                                
                                 Forms\Components\FileUpload::make('path')
                                     ->label('PDF File')
                                     ->acceptedFileTypes(['application/pdf'])
@@ -93,23 +135,29 @@ class ProjectResource extends Resource
 
                 Forms\Components\Section::make('Links & Tools')
                     ->schema([
-                        Forms\Components\TextInput::make('github_link')->label('GitHub')->url(),
-                        Forms\Components\TextInput::make('live_link')->label('Live Demo')->url(),
-                        Forms\Components\TextInput::make('tools_used')->label('Technologies')->placeholder('Laravel, MySQL, etc.'),
+                        Forms\Components\TextInput::make('github_link')
+                            ->label('GitHub')
+                            ->url(),
+                        
+                        Forms\Components\TextInput::make('live_link')
+                            ->label('Live Demo')
+                            ->url(),
+                        
+                        Forms\Components\TextInput::make('tools_used')
+                            ->label('Technologies')
+                            ->placeholder('Laravel, MySQL, etc.'),
                     ])->columns(2),
             ]);
     }
 
     protected static function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
     {
-        // Cover Image Validation and Processing
-        if (!empty($data['cover_image'])) {
-            if (!str_starts_with($data['cover_image'], 'data:image')) {
-                throw new \Exception("Invalid cover image format. Must be Base64.");
-            }
+        // Cover Image Processing
+        if (!empty($data['cover_image']) && str_starts_with($data['cover_image'], 'data:image')) {
             $data['cover_image_data'] = $data['cover_image'];
             unset($data['cover_image']);
         } else {
+            // If no image, ensure it's null or handled correctly by DB default
             unset($data['cover_image']);
         }
 
@@ -138,16 +186,18 @@ class ProjectResource extends Resource
             $data['pdfs'] = null;
         }
 
+        // Ensure gallery_description is not missing if DB requires it (though nullable() fixes this)
+        if (!isset($data['gallery_description'])) {
+            $data['gallery_description'] = null;
+        }
+
         return static::getModel()::create($data);
     }
 
     protected static function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
     {
-        // Cover Image Validation and Processing
-        if (!empty($data['cover_image'])) {
-            if (!str_starts_with($data['cover_image'], 'data:image')) {
-                throw new \Exception("Invalid cover image format. Must be Base64.");
-            }
+        // Cover Image Processing
+        if (!empty($data['cover_image']) && str_starts_with($data['cover_image'], 'data:image')) {
             $data['cover_image_data'] = $data['cover_image'];
             unset($data['cover_image']);
         } else {
@@ -179,6 +229,10 @@ class ProjectResource extends Resource
             $data['pdfs'] = null;
         }
 
+        if (!isset($data['gallery_description'])) {
+            $data['gallery_description'] = null;
+        }
+
         $record->update($data);
         return $record;
     }
@@ -188,16 +242,45 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
-                Tables\Columns\BadgeColumn::make('type')->colors(['warning'=>'hardware','danger'=>'desktop','info'=>'telecom','success'=>'web']),
-                Tables\Columns\BadgeColumn::make('status')->colors(['gray'=>'academic','success'=>'completed','warning'=>'ongoing']),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
+                Tables\Columns\BadgeColumn::make('type')
+                    ->colors([
+                        'warning' => 'hardware',
+                        'danger' => 'desktop',
+                        'info' => 'telecom',
+                        'success' => 'web'
+                    ]),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'gray' => 'academic',
+                        'success' => 'completed',
+                        'warning' => 'ongoing'
+                    ]),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('type')->options(['web'=>'Web','hardware'=>'Hardware','desktop'=>'Desktop','telecom'=>'Telecom']),
-                Tables\Filters\SelectFilter::make('status')->options(['completed'=>'Completed','ongoing'=>'Ongoing','academic'=>'Academic']),
+                Tables\Filters\SelectFilter::make('type')
+                    ->options([
+                        'web' => 'Web',
+                        'hardware' => 'Hardware',
+                        'desktop' => 'Desktop',
+                        'telecom' => 'Telecom'
+                    ]),
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'completed' => 'Completed',
+                        'ongoing' => 'Ongoing',
+                        'academic' => 'Academic'
+                    ]),
             ])
-            ->actions([Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make()])
-            ->bulkActions([Tables\Actions\DeleteBulkAction::make()])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make()
+            ])
             ->defaultSort('created_at', 'desc');
     }
 
